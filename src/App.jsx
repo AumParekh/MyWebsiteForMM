@@ -76,16 +76,16 @@ function App() {
           <div className="hero-photo">
             <div className="hero-photo-deco" aria-hidden="true" />
             <div className="hero-photo-frame">
+              <span className="hero-photo-fallback" aria-hidden="true">
+                AP
+              </span>
               <img
-                src="./aum.jpg"
+                src={`${import.meta.env.BASE_URL}aum.jpg`}
                 alt="Aum Parekh"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none'
                 }}
               />
-              <span className="hero-photo-fallback" aria-hidden="true">
-                AP
-              </span>
             </div>
             <span className="hero-photo-caption">Aum Parekh</span>
           </div>
