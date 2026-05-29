@@ -541,6 +541,7 @@ function App() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeProject, setActiveProject] = useState(null)
+  const [linkCopied, setLinkCopied] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -550,22 +551,78 @@ function App() {
   }, [])
 
   useEffect(() => {
+    const sync = () => {
+      const hash = window.location.hash
+      if (hash.startsWith('#project/')) {
+        const id = hash.slice('#project/'.length)
+        const project = PROJECTS.find((p) => p.id === id)
+        setActiveProject(project || null)
+      } else {
+        setActiveProject(null)
+      }
+    }
+    sync()
+    window.addEventListener('hashchange', sync)
+    return () => window.removeEventListener('hashchange', sync)
+  }, [])
+
+  useEffect(() => {
     if (!activeProject) return
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const onKey = (e) => {
-      if (e.key === 'Escape') setActiveProject(null)
+      if (e.key === 'Escape') closeProject()
     }
     window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = prevOverflow
       window.removeEventListener('keydown', onKey)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProject])
 
   const closeMenu = () => setMenuOpen(false)
-  const openProject = (project) => setActiveProject(project)
-  const closeProject = () => setActiveProject(null)
+
+  const openProject = (project) => {
+    setActiveProject(project)
+    const target = `#project/${project.id}`
+    if (window.location.hash !== target) {
+      window.history.pushState(null, '', target)
+    }
+  }
+
+  const closeProject = () => {
+    setActiveProject(null)
+    setLinkCopied(false)
+    if (window.location.hash.startsWith('#project/')) {
+      window.history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search,
+      )
+    }
+  }
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2200)
+    } catch {
+      const input = document.createElement('input')
+      input.value = window.location.href
+      document.body.appendChild(input)
+      input.select()
+      try {
+        document.execCommand('copy')
+        setLinkCopied(true)
+        setTimeout(() => setLinkCopied(false), 2200)
+      } catch {
+        /* noop */
+      }
+      document.body.removeChild(input)
+    }
+  }
 
   return (
     <div className="site">
@@ -869,15 +926,24 @@ function App() {
             className="project-modal-panel"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              type="button"
-              className="project-modal-close"
-              onClick={closeProject}
-              aria-label="Close project"
-            >
-              <span aria-hidden="true">×</span>
-              <span className="sr-only">Close</span>
-            </button>
+            <div className="project-modal-actions">
+              <button
+                type="button"
+                className={`project-modal-share ${linkCopied ? 'project-modal-share--copied' : ''}`}
+                onClick={copyShareLink}
+              >
+                {linkCopied ? 'Link copied' : 'Copy link'}
+              </button>
+              <button
+                type="button"
+                className="project-modal-close"
+                onClick={closeProject}
+                aria-label="Close project"
+              >
+                <span aria-hidden="true">×</span>
+                <span className="sr-only">Close</span>
+              </button>
+            </div>
             <div id="project-modal-title">
               {activeProject.id === 'socratic' && <SocraticArticle />}
             </div>
