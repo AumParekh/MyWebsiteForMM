@@ -906,9 +906,14 @@ function App() {
           <div className="footer-meta">
             <p className="footer-copy">© {new Date().getFullYear()} Aum Parekh</p>
             <nav className="footer-links" aria-label="Social">
-              <a href="#" aria-label="Email">Email</a>
-              <a href="#" aria-label="LinkedIn">LinkedIn</a>
-              <a href="#" aria-label="Twitter">Twitter</a>
+              <a href="mailto:aumparekhh@gmail.com">Email</a>
+              <a
+                href="https://www.linkedin.com/in/aum-parekh"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn
+              </a>
             </nav>
           </div>
         </div>
