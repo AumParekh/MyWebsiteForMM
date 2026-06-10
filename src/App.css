@@ -57,13 +57,29 @@
     box-shadow 0.45s ease;
 }
 
-.nav--scrolled {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+/* Frosted glass lives on a pseudo-element, NOT on .nav itself: backdrop-filter
+   on the nav turns it into the containing block for fixed descendants on
+   iOS/WebKit, which collapsed the full-screen mobile menu to the nav strip. */
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: rgba(5, 7, 12, 0.62);
   -webkit-backdrop-filter: blur(18px) saturate(150%);
   backdrop-filter: blur(18px) saturate(150%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.nav--scrolled {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   box-shadow: 0 1px 0 var(--line);
+}
+
+.nav--scrolled::before {
+  opacity: 1;
 }
 
 .nav-brand {
@@ -259,7 +275,14 @@
   font-style: italic;
   font-weight: 500;
   font-size: 1.06em;
-  background: var(--grad-accent);
+}
+
+/* Gradient is clipped per character span, not on the <em>: WebKit/iOS fails
+   to apply parent-level background-clip:text when descendants are transformed
+   (the animated chars), which rendered the word invisible on phones.
+   Near-vertical angle keeps every char shading mint→indigo consistently. */
+.hero-title em .hero-char {
+  background: linear-gradient(170deg, var(--accent) 10%, var(--accent-2) 90%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
