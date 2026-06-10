@@ -1,3 +1,62 @@
+/* ----------------------------------------------------------------------------
+   Design tokens & base styles
+   System: deep near-black base, mint→indigo accent pair, glass surfaces.
+   Type:   Space Grotesk (display) · Cormorant Garamond italic (accent em)
+           Inter (body) · JetBrains Mono (labels/meta)
+---------------------------------------------------------------------------- */
+
+:root {
+  /* Palette */
+  --bg: #05070c;
+  --bg-elev: #0a0e17;
+  --bg-raise: #0e1320;
+  --ink: #e9edf4;
+  --ink-dim: #9aa5b6;
+  --ink-faint: #5d6778;
+  --accent: #5eead4;
+  --accent-2: #8b9cf9;
+  --line: rgba(233, 237, 244, 0.08);
+  --line-strong: rgba(233, 237, 244, 0.16);
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-strong: rgba(255, 255, 255, 0.055);
+
+  /* Gradients */
+  --grad-accent: linear-gradient(100deg, var(--accent) 0%, var(--accent-2) 100%);
+  --grad-faint: linear-gradient(
+    140deg,
+    rgba(94, 234, 212, 0.14),
+    rgba(139, 156, 249, 0.1)
+  );
+
+  /* Type */
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Fluid type scale */
+  --text-hero: clamp(2.7rem, 7.6vw, 5.6rem);
+  --text-h2: clamp(1.9rem, 4.2vw, 3.2rem);
+  --text-h3: clamp(1.2rem, 2vw, 1.45rem);
+  --text-lede: clamp(1.02rem, 1.4vw, 1.16rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-label: 0.72rem;
+
+  /* Rhythm */
+  --space-section: clamp(6rem, 14vh, 10rem);
+  --container: 75rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --radius: 18px;
+  --radius-lg: 26px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.3, 1.4, 0.4, 1);
+  --dur: 0.8s;
+}
+
 *,
 *::before,
 *::after {
@@ -16,11 +75,92 @@ body,
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', sans-serif;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #e6c8b7;
-  background: #261311;
-  line-height: 1.6;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* Film-grain texture overlay over everything, very low opacity */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: rgba(94, 234, 212, 0.28);
+  color: #f4fffc;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Subtle custom scrollbar (WebKit) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2433;
+  border-radius: 8px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3550;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Calm fallback: no smooth scrolling, no grain shimmer for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }
