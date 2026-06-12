@@ -1,62 +1,59 @@
 /* ----------------------------------------------------------------------------
    Design tokens & base styles
-   System: pure-black monochrome with white "liquid glass" surfaces.
-   Type:   Instrument Serif (display) · Inter (UI/body, tracked labels)
+   System: "Studio Aurora" — deep #0F1115 base, electric-indigo accent,
+   white hairlines, flat raised surfaces.
+   Type:   Syne 800 (display, tight) · Hanken Grotesk (body/UI/labels)
            JetBrains Mono (code only)
 ---------------------------------------------------------------------------- */
 
 :root {
-  /* Palette — single hue: white over black at varying opacities */
-  --bg: #000000;
-  --bg-elev: #070707;
-  --bg-raise: #101010;
-  --ink: #ffffff;
-  --ink-dim: rgba(255, 255, 255, 0.65);
-  --ink-faint: rgba(255, 255, 255, 0.38);
-  --accent: #ffffff;
-  --accent-2: rgba(255, 255, 255, 0.65);
+  /* Palette */
+  --bg: #0f1115;
+  --bg-elev: #14161c;
+  --bg-raise: #181b22;
+  --surface: #181b22;
+  --ink: #edeff4;
+  --ink-dim: #9aa1b2;
+  --ink-faint: #7e8597;
+  --accent: #6d7bff;
+  --accent-2: #a5afff;
   --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.16);
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-strong: rgba(255, 255, 255, 0.055);
+  --line-strong: rgba(255, 255, 255, 0.12);
+  --glass: #181b22;
+  --glass-strong: #1d212a;
 
-  /* Gradients — vertical white falloff, as on the reference hero heading */
-  --grad-accent: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    rgba(255, 255, 255, 0.95) 55%,
-    rgba(255, 255, 255, 0.65) 100%
-  );
+  /* Gradients — text falloff toward the indigo accent */
+  --grad-accent: linear-gradient(120deg, #edeff4 25%, var(--accent-2) 100%);
   --grad-faint: linear-gradient(
     140deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.05)
+    rgba(109, 123, 255, 0.12),
+    rgba(109, 123, 255, 0.05)
   );
 
   /* Type */
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-serif: 'Fraunces', Georgia, serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', sans-serif;
-  --font-label: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', sans-serif;
+  --font-display: 'Syne', 'Hanken Grotesk', sans-serif;
+  --font-serif: 'Hanken Grotesk', -apple-system, sans-serif;
+  --font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', sans-serif;
+  --font-label: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Fluid type scale — serif display runs a touch larger than the grotesk did */
-  --text-hero: clamp(2.9rem, 8vw, 6rem);
-  --text-h2: clamp(2.1rem, 4.6vw, 3.5rem);
-  --text-h3: clamp(1.3rem, 2.1vw, 1.55rem);
-  --text-lede: clamp(1.02rem, 1.4vw, 1.16rem);
+  /* Fluid type scale — Syne 800 is wide and heavy; cap the hero near 80px */
+  --text-hero: clamp(2.6rem, 7.2vw, 5rem);
+  --text-h2: clamp(1.9rem, 4.2vw, 3rem);
+  --text-h3: clamp(1.2rem, 2vw, 1.45rem);
+  --text-lede: clamp(1rem, 1.4vw, 1.1rem);
   --text-body: 1rem;
   --text-small: 0.875rem;
-  --text-label: 0.7rem;
+  --text-label: 0.75rem;
 
   /* Rhythm */
   --space-section: clamp(6rem, 14vh, 10rem);
   --container: 75rem;
   --gutter: clamp(1.25rem, 4vw, 3rem);
-  --radius: 18px;
-  --radius-lg: 26px;
+  --radius: 16px;
+  --radius-lg: 16px;
 
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -87,7 +84,6 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;
   color: var(--ink);
   background: var(--bg);
   line-height: 1.65;
@@ -106,8 +102,8 @@ body::after {
 }
 
 ::selection {
-  background: #ffffff;
-  color: #000000;
+  background: var(--accent);
+  color: var(--bg);
 }
 
 a {
@@ -125,7 +121,7 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -138,12 +134,12 @@ button {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #232323;
+  background: #262a35;
   border-radius: 8px;
   border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
+  background: #353b4d;
 }
 
 .sr-only {

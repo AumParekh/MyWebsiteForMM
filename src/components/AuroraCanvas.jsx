@@ -66,19 +66,23 @@ void main() {
   );
   float f = fbm(p * 1.6 + r * 1.8);
 
-  // Monochrome grade: slow silver smoke drifting over pure black,
-  // standing in for the reference design's background video.
-  vec3 deep = vec3(0.008);
-  vec3 smokeLow = vec3(0.16, 0.165, 0.18);
-  vec3 smokeHigh = vec3(0.38, 0.39, 0.41);
+  // "Studio Aurora" grade: electric-indigo aurora drifting over #0F1115,
+  // biased toward the top-right corner like the static design's glow.
+  vec3 deep = vec3(0.059, 0.067, 0.082);
+  vec3 indigoLow = vec3(0.13, 0.15, 0.32);
+  vec3 indigoHigh = vec3(0.31, 0.36, 0.78);
 
   vec3 col = deep;
-  col = mix(col, smokeLow, smoothstep(0.25, 0.95, f) * 0.55);
-  col = mix(col, smokeHigh, smoothstep(0.45, 1.0, q.y * f) * 0.45);
+  col = mix(col, indigoLow, smoothstep(0.25, 0.95, f) * 0.55);
+  col = mix(col, indigoHigh, smoothstep(0.45, 1.0, q.y * f) * 0.40);
+
+  // Corner bias: strengthen the field toward the top-right
+  float corner = smoothstep(0.4, 1.4, uv.x + uv.y);
+  col = mix(deep, col, 0.35 + 0.65 * corner);
 
   vec2 ar = vec2(u_res.x / u_res.y, 1.0);
   float d = distance(uv * ar, u_mouse * ar);
-  col += vec3(0.30) * exp(-d * d * 9.0) * 0.35;
+  col += vec3(0.20, 0.23, 0.55) * exp(-d * d * 9.0) * 0.40;
 
   col *= 1.0 - u_scroll * 0.4;
 
