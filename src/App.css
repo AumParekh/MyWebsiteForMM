@@ -1,6 +1,6 @@
 /* ============================================================================
    Component styles
-   "Studio Aurora": deep #0F1115 base, electric-indigo accent, Syne 800
+   "Studio Aurora": deep #0F1115 base, electric-indigo accent, Bricolage 800
    display with Hanken Grotesk UI. Motion: masked char reveals, IO-driven
    rise/unblur reveals, pointer tilt + glow, marquee, magnetic CTAs.
 ============================================================================ */
@@ -279,7 +279,7 @@
   letter-spacing: -0.03em;
 }
 
-/* Syne has no italics — the accent word is highlighted in indigo instead */
+/* Bricolage has no italics — the accent word is highlighted in indigo instead */
 .hero-title em {
   font-family: inherit;
   font-style: normal;
@@ -645,7 +645,7 @@
   color: var(--ink);
 }
 
-/* Syne has no italics — accent words go indigo instead */
+/* Bricolage has no italics — accent words go indigo instead */
 .section-title em {
   font-family: inherit;
   font-style: normal;

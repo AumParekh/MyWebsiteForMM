@@ -2,7 +2,7 @@
    Design tokens & base styles
    System: "Studio Aurora" — deep #0F1115 base, electric-indigo accent,
    white hairlines, flat raised surfaces.
-   Type:   Syne 800 (display, tight) · Hanken Grotesk (body/UI/labels)
+   Type:   Bricolage Grotesque 800 (display, tight) · Hanken Grotesk (body/UI)
            JetBrains Mono (code only)
 ---------------------------------------------------------------------------- */
 
@@ -31,7 +31,7 @@
   );
 
   /* Type */
-  --font-display: 'Syne', 'Hanken Grotesk', sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Hanken Grotesk', sans-serif;
   --font-serif: 'Hanken Grotesk', -apple-system, sans-serif;
   --font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', sans-serif;
@@ -39,7 +39,7 @@
     Roboto, 'Helvetica Neue', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Fluid type scale — Syne 800 is wide and heavy; cap the hero near 80px */
+  /* Fluid type scale — Bricolage 800 is wide and heavy; cap the hero near 80px */
   --text-hero: clamp(2.6rem, 7.2vw, 5rem);
   --text-h2: clamp(1.9rem, 4.2vw, 3rem);
   --text-h3: clamp(1.2rem, 2vw, 1.45rem);
