@@ -66,17 +66,19 @@ void main() {
   );
   float f = fbm(p * 1.6 + r * 1.8);
 
-  vec3 deep = vec3(0.020, 0.027, 0.047);
-  vec3 indigo = vec3(0.21, 0.22, 0.55);
-  vec3 mint = vec3(0.05, 0.46, 0.41);
+  // Monochrome grade: slow silver smoke drifting over pure black,
+  // standing in for the reference design's background video.
+  vec3 deep = vec3(0.008);
+  vec3 smokeLow = vec3(0.16, 0.165, 0.18);
+  vec3 smokeHigh = vec3(0.38, 0.39, 0.41);
 
   vec3 col = deep;
-  col = mix(col, indigo, smoothstep(0.25, 0.95, f) * 0.42);
-  col = mix(col, mint, smoothstep(0.40, 1.0, q.y * f) * 0.48);
+  col = mix(col, smokeLow, smoothstep(0.25, 0.95, f) * 0.55);
+  col = mix(col, smokeHigh, smoothstep(0.45, 1.0, q.y * f) * 0.45);
 
   vec2 ar = vec2(u_res.x / u_res.y, 1.0);
   float d = distance(uv * ar, u_mouse * ar);
-  col += vec3(0.10, 0.34, 0.30) * exp(-d * d * 9.0) * 0.5;
+  col += vec3(0.30) * exp(-d * d * 9.0) * 0.35;
 
   col *= 1.0 - u_scroll * 0.4;
 

@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import AuroraCanvas from './AuroraCanvas.jsx'
 import Magnetic from './Magnetic.jsx'
 
 /*
- * Cinematic hero: WebGL aurora backdrop, masked char-by-char headline reveal,
- * staggered sub/CTA entrance, parallaxed portrait card, and a marquee strip.
- * Headline text is identical to the original copy — only presentation changed.
+ * Cinematic full-screen hero: monochrome WebGL smoke backdrop (stands in for
+ * a background video), centered serif headline with a masked char-by-char
+ * reveal and white vertical-gradient fill, staggered sub/CTA entrance, and a
+ * marquee strip. Headline text is identical to the original copy.
  */
 
 // One entry per visual line; `em` marks the serif-italic accent word.
 const HERO_LINES = [
   [{ text: 'I work at the' }],
   [{ text: 'intersection', em: true }, { text: ' of' }],
-  [{ text: 'Risk, models,' }],
-  [{ text: 'and ideas.' }],
+  [{ text: 'Risk, models, and ideas.' }],
 ]
 
 const HERO_LABEL = 'I work at the intersection of Risk, models, and ideas.'
@@ -72,34 +72,11 @@ const MARQUEE_ITEMS = [
 
 export default function Hero() {
   const [entered, setEntered] = useState(false)
-  const photoRef = useRef(null)
 
   // Trigger the entrance choreography just after first paint
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(id)
-  }, [])
-
-  // Gentle parallax drift on the portrait while the hero scrolls away
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return undefined
-    }
-    let raf = 0
-    const onScroll = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        const el = photoRef.current
-        if (!el) return
-        const y = Math.min(window.scrollY, window.innerHeight)
-        el.style.transform = `translateY(${y * -0.08}px)`
-      })
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(raf)
-    }
   }, [])
 
   return (
@@ -108,65 +85,46 @@ export default function Hero() {
         <AuroraCanvas className="hero-canvas" />
       </div>
 
-      <div className="hero-grid">
-        <div className="hero-copy">
-          <span className="eyebrow">Portfolio · Notebook · 2026</span>
-          <h1 className="hero-title" aria-label={HERO_LABEL}>
-            {HERO_SPLIT.map((line, li) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <span className="hero-line" key={li} aria-hidden="true">
-                <span className="hero-line-inner">
-                  {line.map((part, pi) =>
-                    part.em ? (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <em key={pi}>
-                        <Chars words={part.words} />
-                      </em>
-                    ) : (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <span key={pi}>
-                        <Chars words={part.words} />
-                      </span>
-                    ),
-                  )}
-                </span>
+      <div className="hero-inner">
+        <span className="eyebrow">Portfolio · Notebook · 2026</span>
+        <h1 className="hero-title" aria-label={HERO_LABEL}>
+          {HERO_SPLIT.map((line, li) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <span className="hero-line" key={li} aria-hidden="true">
+              <span className="hero-line-inner">
+                {line.map((part, pi) =>
+                  part.em ? (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <em key={pi}>
+                      <Chars words={part.words} />
+                    </em>
+                  ) : (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <span key={pi}>
+                      <Chars words={part.words} />
+                    </span>
+                  ),
+                )}
               </span>
-            ))}
-          </h1>
-          <p className="hero-sub">
-            By day, I build models for ALM Risk and fixed income portfolios.
-            The rest of the time, I think about how AI changes the way we
-            learn, work, and make things — and I write about it here.
-          </p>
-          <div className="hero-cta">
-            <Magnetic>
-              <a className="btn btn--primary" href="#about">
-                Read more
-              </a>
-            </Magnetic>
-            <Magnetic>
-              <a className="btn btn--ghost" href="#projects">
-                See projects
-              </a>
-            </Magnetic>
-          </div>
-        </div>
-
-        <div className="hero-photo" ref={photoRef}>
-          <div className="hero-photo-deco" aria-hidden="true" />
-          <div className="hero-photo-frame">
-            <span className="hero-photo-fallback" aria-hidden="true">
-              AP
             </span>
-            <img
-              src={`${import.meta.env.BASE_URL}aum.jpg`}
-              alt="Aum Parekh"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
-            />
-          </div>
-          <span className="hero-photo-caption">Aum Parekh</span>
+          ))}
+        </h1>
+        <p className="hero-sub">
+          By day, I build models for ALM Risk and fixed income portfolios.
+          The rest of the time, I think about how AI changes the way we
+          learn, work, and make things — and I write about it here.
+        </p>
+        <div className="hero-cta">
+          <Magnetic>
+            <a className="btn btn--primary" href="#about">
+              Read more
+            </a>
+          </Magnetic>
+          <Magnetic>
+            <a className="btn btn--ghost" href="#projects">
+              See projects
+            </a>
+          </Magnetic>
         </div>
       </div>
 

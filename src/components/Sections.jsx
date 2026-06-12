@@ -16,6 +16,22 @@ export function About() {
           <h2 className="section-title">
             A thinker between <em>two worlds.</em>
           </h2>
+          <div className="portrait">
+            <div className="portrait-deco" aria-hidden="true" />
+            <div className="portrait-frame">
+              <span className="portrait-fallback" aria-hidden="true">
+                AP
+              </span>
+              <img
+                src={`${import.meta.env.BASE_URL}aum.jpg`}
+                alt="Aum Parekh"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </div>
+            <span className="portrait-caption">Aum Parekh</span>
+          </div>
         </Reveal>
         <Reveal className="prose" delay={120}>
           <p>

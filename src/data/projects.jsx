@@ -32,7 +32,7 @@ export const SocraticIcon = () => (
       width="37"
       height="25"
       rx="2"
-      fill="rgba(94, 234, 212, 0.08)"
+      fill="rgba(255, 255, 255, 0.08)"
       stroke="currentColor"
       strokeWidth="1.6"
     />

@@ -9,13 +9,14 @@ const NAV_LINKS = [
 ]
 
 /*
- * Sticky nav: transparent over the hero, frosted glass once scrolled, with a
- * gradient reading-progress bar along its bottom edge. Mobile gets a
- * full-screen overlay menu with staggered link entrances.
+ * Floating liquid-glass pill nav with a gradient reading-progress hairline at
+ * the very top of the viewport. The mobile menu is a separate full-screen
+ * overlay rendered OUTSIDE the pill — the pill's backdrop-filter would
+ * otherwise become the containing block for fixed descendants on iOS/WebKit.
  */
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const progressRef = useRef(null)
 
   useEffect(() => {
@@ -64,29 +65,40 @@ export default function Nav() {
         menuOpen ? 'nav--open' : ''
       }`}
     >
-      <a className="nav-brand" href="#top" onClick={closeMenu}>
-        Aum<span className="nav-brand-dot">.</span>
-      </a>
-      <button
-        className="nav-toggle"
-        aria-label="Toggle menu"
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen((v) => !v)}
-      >
-        <span />
-        <span />
-      </button>
-      <div className={`nav-links ${menuOpen ? 'nav-links--open' : ''}`}>
-        {NAV_LINKS.map((link, i) => (
-          <a
-            key={link.href}
-            href={link.href}
-            onClick={closeMenu}
-            style={{ '--i': i }}
-          >
-            {link.label}
-          </a>
-        ))}
+      {menuOpen && (
+        <div className="nav-overlay">
+          {NAV_LINKS.map((link, i) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={closeMenu}
+              style={{ '--i': i }}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
+      <div className="nav-pill liquid-glass">
+        <a className="nav-brand" href="#top" onClick={closeMenu}>
+          Aum<span className="nav-brand-dot">.</span>
+        </a>
+        <div className="nav-links">
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <button
+          className="nav-toggle"
+          aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span />
+          <span />
+        </button>
       </div>
       <span className="nav-progress" aria-hidden="true">
         <span className="nav-progress-bar" ref={progressRef} />
