@@ -105,6 +105,11 @@
   z-index: 1;
 }
 
+/* Footer (contact) sits clearly above the fog at the end of the space */
+.is-3d .footer {
+  z-index: 2;
+}
+
 /* Dissolve the flat section bands so the fog becomes the environment */
 .is-3d .section,
 .is-3d .section--light,
