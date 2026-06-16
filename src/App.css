@@ -273,6 +273,12 @@
   height: 100%;
 }
 
+/* 3D particle galaxy: additive glow layered as light over the aurora */
+.hero-particles {
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
 /* Soft fade into the page below */
 .hero-bg::after {
   content: '';
@@ -285,6 +291,7 @@
 .hero-inner {
   position: relative;
   z-index: 1;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -293,6 +300,20 @@
   max-width: 64rem;
   margin: 0 auto;
   padding: clamp(7rem, 16vh, 9rem) var(--gutter) 7rem;
+}
+
+/* Soft scrim so the headline reads cleanly over the bright galaxy core */
+.hero-inner::before {
+  content: '';
+  position: absolute;
+  inset: -12% -25%;
+  z-index: -1;
+  background: radial-gradient(
+    58% 48% at 50% 52%,
+    rgba(15, 17, 21, 0.6),
+    rgba(15, 17, 21, 0) 72%
+  );
+  pointer-events: none;
 }
 
 .eyebrow {

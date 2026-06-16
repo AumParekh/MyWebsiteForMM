@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import AuroraCanvas from './AuroraCanvas.jsx'
+import ParticleField from './ParticleField.jsx'
 import Magnetic from './Magnetic.jsx'
 
 /*
@@ -111,6 +112,7 @@ export default function Hero() {
     <section id="top" className={`hero ${entered ? 'hero--in' : ''}`}>
       <div className="hero-bg" aria-hidden="true">
         <AuroraCanvas className="hero-canvas" />
+        <ParticleField className="hero-canvas hero-particles" />
       </div>
 
       <div className="hero-inner" ref={innerRef}>
