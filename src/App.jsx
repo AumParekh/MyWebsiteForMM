@@ -12,6 +12,7 @@ import {
 } from './components/Sections.jsx'
 import ProjectModal from './components/ProjectModal.jsx'
 import CursorGlow from './components/CursorGlow.jsx'
+import Scene3D from './components/Scene3D.jsx'
 import WormholeProvider from './components/WormholeProvider.jsx'
 import { getWormhole } from './lib/wormhole.js'
 import { PROJECTS } from './data/projects.jsx'
@@ -67,6 +68,7 @@ function App() {
 
   return (
     <div className="site">
+      <Scene3D />
       <WormholeProvider />
       <CursorGlow />
       <Nav />

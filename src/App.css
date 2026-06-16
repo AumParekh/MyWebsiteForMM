@@ -82,6 +82,61 @@
   transform: scale(1.4);
 }
 
+/* ------------------------------------------------------------ 3D scene ---
+   Real DOM suspended in a CSS-3D space, with a raw-WebGL fog field behind.
+   Everything here is scoped to .is-3d, which Scene3D only adds when WebGL is
+   available and motion is allowed — otherwise the flat layout is untouched. */
+.fog-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  pointer-events: none;
+  display: block;
+}
+
+/* Lift the real content above the fog */
+.is-3d .hero,
+.is-3d main,
+.is-3d .footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dissolve the flat section bands so the fog becomes the environment */
+.is-3d .section,
+.is-3d .section--light,
+.is-3d .section--accent {
+  background: transparent;
+  border-color: transparent;
+  perspective: 1300px;
+}
+
+/* Each section's content is a plane floating in its section's perspective */
+.is-3d .section-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Key-light halo that strengthens as the camera nears (driven by --lit) */
+.is-3d .section-inner::before {
+  content: '';
+  position: absolute;
+  inset: -10% -8%;
+  z-index: -1;
+  border-radius: 28px;
+  background: radial-gradient(
+    62% 55% at 50% 12%,
+    rgba(150, 162, 255, calc(var(--lit, 0) * 0.12)),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
 /* ------------------------------------------------------- wormhole portal ---
    Full-screen overlay for the WebGL portal transition (and its plain-DOM fade
    fallback). Sits above everything — nav (50), modal (100), grain (9999).
