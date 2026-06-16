@@ -82,6 +82,37 @@
   transform: scale(1.4);
 }
 
+/* ------------------------------------------------------- wormhole portal ---
+   Full-screen overlay for the WebGL portal transition (and its plain-DOM fade
+   fallback). Sits above everything — nav (50), modal (100), grain (9999).
+   Idle: invisible and click-through; activated only during a transition. */
+.wormhole-canvas,
+.wormhole-fade {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.wormhole-canvas.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.wormhole-fade {
+  background: #0b0d12;
+  transition: opacity 0.18s ease;
+}
+
+.wormhole-fade.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* -------------------------------------------------------------------- nav */
 
 .nav {
@@ -1652,6 +1683,12 @@
   /* Decorative cursor light and spotlight overlay never appear */
   .cursor-glow,
   .portrait-overlay {
+    display: none !important;
+  }
+
+  /* No portal animation — navigation is instant for reduced-motion users */
+  .wormhole-canvas,
+  .wormhole-fade {
     display: none !important;
   }
 }

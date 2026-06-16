@@ -12,6 +12,8 @@ import {
 } from './components/Sections.jsx'
 import ProjectModal from './components/ProjectModal.jsx'
 import CursorGlow from './components/CursorGlow.jsx'
+import WormholeProvider from './components/WormholeProvider.jsx'
+import { getWormhole } from './lib/wormhole.js'
 import { PROJECTS } from './data/projects.jsx'
 
 /*
@@ -38,27 +40,34 @@ function App() {
     return () => window.removeEventListener('hashchange', sync)
   }, [])
 
+  // Route changes run through the wormhole portal; the state swap happens at
+  // the hidden midpoint so the modal emerges out of the tunnel.
   const openProject = (project) => {
-    setActiveProject(project)
-    const target = `#project/${project.id}`
-    if (window.location.hash !== target) {
-      window.history.pushState(null, '', target)
-    }
+    getWormhole().run(() => {
+      setActiveProject(project)
+      const target = `#project/${project.id}`
+      if (window.location.hash !== target) {
+        window.history.pushState(null, '', target)
+      }
+    })
   }
 
   const closeProject = () => {
-    setActiveProject(null)
-    if (window.location.hash.startsWith('#project/')) {
-      window.history.replaceState(
-        null,
-        '',
-        window.location.pathname + window.location.search,
-      )
-    }
+    getWormhole().run(() => {
+      setActiveProject(null)
+      if (window.location.hash.startsWith('#project/')) {
+        window.history.replaceState(
+          null,
+          '',
+          window.location.pathname + window.location.search,
+        )
+      }
+    })
   }
 
   return (
     <div className="site">
+      <WormholeProvider />
       <CursorGlow />
       <Nav />
       <Hero />
