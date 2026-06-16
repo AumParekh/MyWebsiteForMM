@@ -239,6 +239,7 @@ export function Footer() {
           <p className="footer-copy">© {new Date().getFullYear()} Aum Parekh</p>
           <nav className="footer-links" aria-label="Social">
             <a href="mailto:aumparekhh@gmail.com">Email</a>
+            <a href="tel:+919321130281">Phone</a>
             <a
               href="https://www.linkedin.com/in/aum-parekh"
               target="_blank"
