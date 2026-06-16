@@ -39,6 +39,49 @@
   will-change: transform;
 }
 
+/* --------------------------------------------------------- cursor glow ---
+   Ambient "aurora light" easing toward the pointer. The outer element is
+   positioned by JS (translate3d); the inner core carries the look and scales
+   up over interactive targets. Screen blend so it reads as light over the
+   dark base. Sits above content but below the nav (50) and modal (100).
+   Only ever rendered active on fine pointers without reduced motion. */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  will-change: transform;
+}
+
+.cursor-glow--on {
+  opacity: 1;
+}
+
+.cursor-glow-core {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  margin: -220px 0 0 -220px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(109, 123, 255, 0.18) 0%,
+    rgba(109, 123, 255, 0.07) 40%,
+    rgba(109, 123, 255, 0) 70%
+  );
+  mix-blend-mode: screen;
+  filter: blur(6px);
+  transform: scale(1);
+  transition: transform 0.5s var(--ease-out);
+}
+
+.cursor-glow--active .cursor-glow-core {
+  transform: scale(1.4);
+}
+
 /* -------------------------------------------------------------------- nav */
 
 .nav {
@@ -457,6 +500,44 @@
 .portrait:hover .portrait-frame img {
   transform: scale(1.035);
   filter: saturate(1) contrast(1.02);
+}
+
+/* Spotlight reveal: a second exposure surfaced beneath the first through a
+   soft circular mask that follows the cursor — "a thinker between two worlds".
+   The higher-specificity selector keeps the opacity transition from being
+   clobbered by the shared .portrait-frame img rule above, while still riding
+   its hover scale so both layers stay registered. */
+.portrait-frame .portrait-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.04);
+  opacity: 0;
+  --sx: 50%;
+  --sy: 50%;
+  -webkit-mask-image: radial-gradient(
+    circle 92px at var(--sx) var(--sy),
+    #000 0%,
+    #000 42%,
+    transparent 74%
+  );
+  mask-image: radial-gradient(
+    circle 92px at var(--sx) var(--sy),
+    #000 0%,
+    #000 42%,
+    transparent 74%
+  );
+  transition:
+    opacity 0.5s var(--ease-out),
+    transform 0.8s var(--ease-out),
+    filter 0.8s ease;
+}
+
+.portrait-overlay--on {
+  opacity: 1;
 }
 
 .portrait-fallback {
@@ -1545,5 +1626,11 @@
     transform: none;
     filter: none;
     transition: none;
+  }
+
+  /* Decorative cursor light and spotlight overlay never appear */
+  .cursor-glow,
+  .portrait-overlay {
+    display: none !important;
   }
 }

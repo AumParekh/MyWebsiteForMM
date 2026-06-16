@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import AuroraCanvas from './AuroraCanvas.jsx'
 import Magnetic from './Magnetic.jsx'
 
@@ -72,11 +72,39 @@ const MARQUEE_ITEMS = [
 
 export default function Hero() {
   const [entered, setEntered] = useState(false)
+  const innerRef = useRef(null)
 
   // Trigger the entrance choreography just after first paint
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(id)
+  }, [])
+
+  // Cinematic exit: as the hero scrolls away, its content drifts up and fades,
+  // handing off to the page below. Composited transform/opacity only, rAF-
+  // throttled, and skipped for reduced-motion users (who get a static hero).
+  useEffect(() => {
+    const el = innerRef.current
+    if (!el) return undefined
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return undefined
+    }
+    let raf = 0
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const vh = window.innerHeight || 1
+        const p = Math.min(1, window.scrollY / vh)
+        el.style.transform = `translateY(${p * 60}px)`
+        el.style.opacity = `${1 - p * 0.9}`
+      })
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
+    }
   }, [])
 
   return (
@@ -85,7 +113,7 @@ export default function Hero() {
         <AuroraCanvas className="hero-canvas" />
       </div>
 
-      <div className="hero-inner">
+      <div className="hero-inner" ref={innerRef}>
         <span className="eyebrow">Portfolio · Notebook · 2026</span>
         <h1 className="hero-title" aria-label={HERO_LABEL}>
           {HERO_SPLIT.map((line, li) => (

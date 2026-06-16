@@ -11,6 +11,7 @@ import {
   Footer,
 } from './components/Sections.jsx'
 import ProjectModal from './components/ProjectModal.jsx'
+import CursorGlow from './components/CursorGlow.jsx'
 import { PROJECTS } from './data/projects.jsx'
 
 /*
@@ -58,6 +59,7 @@ function App() {
 
   return (
     <div className="site">
+      <CursorGlow />
       <Nav />
       <Hero />
       <main>
