@@ -29,7 +29,9 @@ export default function Reveal({
           io.disconnect()
         }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -7% 0px' },
+      // No bottom dead-zone: elements at the very end of the page (e.g. the
+      // footer contact block) must still reveal when scrolled fully into view.
+      { threshold: 0.12, rootMargin: '0px 0px 0px 0px' },
     )
     io.observe(el)
     return () => io.disconnect()
