@@ -409,137 +409,103 @@
   padding-top: 4rem;           /* clear the fixed nav bar */
 }
 
-/* ── Headline block — aside + display lines + rule ────────────────────────── */
+/* ── Headline block — the giant lines + rule ─────────────────────────────── */
 .hero-headline-block {
   display: flex;
   flex-direction: column;
-  /* Aside aligns with the left edge of the headline. Both are left-aligned. */
-  align-items: flex-start;
-  /* Upward offset: pull the whole block up slightly from true centre */
-  margin-bottom: 4vh;
+  align-items: flex-start;   /* left-aligned giants */
+  margin-bottom: 4vh;        /* slight upward bias from true centre */
 }
 
-/* ── Clip container (overflow:hidden wrapper for translateY reveals) ───────── */
-/*
- * Both the aside clip and the display-line clips use this pattern.
- * overflow:hidden is the only purpose; the inner element slides through it.
- * Line-height must closely match the inner element's line-height so the clip
- * is exactly one line tall — preventing adjacent lines leaking into the mask.
- */
-.hero-clip {
-  overflow: hidden;
-}
-
-/* Aside clip: sized to one line of the serif text */
-.hero-aside-clip {
-  line-height: 1.3;
-  margin-bottom: 0.4em;  /* gap between aside and headline */
-}
-
-/* Display-line clip: sized to one display-scale line */
-.hero-display-line-clip {
-  line-height: var(--display-lh);
-  /* A tiny buffer below the line so descenders aren't clipped on revert */
-  padding-bottom: 0.04em;
-  /* Block display so lines stack */
-  display: block;
-}
-
-/* ── Serif italic aside ──────────────────────────────────────────────────────*/
-/*
- * "I work at the intersection of"
- * Bodoni Moda italic; clamp-sized so it scales proportionally with the display.
- * Starts at translateY(100%) via GSAP; CSS default is translateY(0) (visible).
- */
-.hero-aside {
-  font-family: var(--serif);
-  font-style: normal;
-  font-weight: 400;
-  font-size: clamp(1rem, 2vw, 1.6rem);
-  color: var(--ink);
-  margin: 0;
-  line-height: 1.3;
-  /* translateY(0) is the CSS default — GSAP fromTo overrides on each run */
-}
-
-/* ── Display headline ────────────────────────────────────────────────────────*/
-/*
- * <h1> holds three .hero-display-line-clip wrappers.
- * font-size: var(--display) = calc(0.75em + 12vw) — scales with viewport.
- * line-height: var(--display-lh) = 0.78 — lines sit tight, nearly touching.
- * letter-spacing: var(--display-ls) = -0.05em — optical tightening.
- */
+/* The <h1> is a column of three giant lines. */
 .hero-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.04em;               /* giants stack tight, nearly touching */
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+/*
+ * One line = [serif aside] GIANT [serif aside], baseline-aligned so the small
+ * asides hug the foot of each giant — the Adcker marginalia move. flex-wrap
+ * lets a trailing aside drop below on very narrow screens instead of clipping.
+ */
+.hero-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.3em;
+  row-gap: 0.1em;
+}
+/* The MACHINE line centres items so the portrait sits on the giant's axis. */
+.hero-line--machine {
+  align-items: center;
+  column-gap: 0.28em;
+}
+
+/*
+ * Clip box for the giant's clip-mask rise. Giants are UPPERCASE so there are no
+ * descenders to clip. Tiny padding + matching negative margin give the heavy
+ * letterforms a little side/▲ breathing room without shifting layout.
+ */
+.hero-giant-clip {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.06em 0.04em 0;
+  margin: -0.06em -0.04em -0.06em;
+}
+
+/*
+ * The giant noun — viewport-filling Kumbh Sans 700. Capped against viewport
+ * HEIGHT (svh) so three giant lines + asides + rule + ( scroll ) always fit one
+ * screen, with a rem floor so it stays bold on small phones.
+ */
+.hero-giant {
+  display: inline-block;
   font-family: var(--sans);
   font-weight: 700;
-  /*
-   * Width-based --display (calc(0.75em + 12vw)) is the intent, but three stacked
-   * lines at that size overflow short viewports and push the ( scroll ) indicator
-   * below the fold. Cap against viewport HEIGHT (svh, matching min-height:100svh)
-   * so the whole hero — aside + 3 lines + rule + indicator — always fits one
-   * screen while staying large on tall displays.
-   */
-  font-size: min(var(--display), 20svh);
-  line-height: var(--display-lh);
-  letter-spacing: var(--display-ls);
+  font-size: max(2rem, min(13vw, 19svh));
+  line-height: 0.82;
+  letter-spacing: -0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Small Bodoni serif aside — the "whisper" against the giant "shout". */
+.hero-aside {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(0.9rem, 1.7vw, 1.6rem);
+  line-height: 1.1;
   color: var(--ink);
-  margin: 0;
-  display: block;
+  white-space: nowrap;
 }
 
-/* ── Display line inner (the sliding element inside .hero-clip) ───────────── */
-/*
- * Default state: translateY(0) — visible. GSAP fromTo sets translateY(100%)
- * as the start each run. ctx.revert() restores to this CSS default (visible).
- */
-.hero-display-line-inner {
-  display: block;
-  line-height: var(--display-lh);
-}
-
-/*
- * Line 2 variant: flex row so the portrait sits inline.
- * align-items:center keeps parens and image on the same axis.
- * gap is kept small — the parens are already part of the display type rhythm.
- */
-.hero-display-line-inner--row {
-  display: flex;
-  align-items: center;
-  gap: 0.12em;
-}
-
-/* ── Parenthesis glyphs flanking the portrait ─────────────────────────────── */
-/*
- * Same font / weight / size as the headline (inherited from .hero-display).
- * user-select:none so double-click on the headline doesn't grab parens alone.
- */
+/* Parenthesis glyphs flanking the portrait — sized between giant and aside. */
 .hero-paren {
   display: inline-block;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: max(1.8rem, min(10vw, 15svh));
+  line-height: 0.82;
+  letter-spacing: -0.02em;
   user-select: none;
-  line-height: var(--display-lh);
 }
 
-/* ── Portrait image ──────────────────────────────────────────────────────────*/
 /*
- * height: 0.78em = cap height of the display font (matching --display-lh).
- * Using em so it scales in lock-step with the display font-size (--display).
- * aspect-ratio: 3/4 so width is derived automatically.
- * object-fit: cover fills the box without distortion.
- *
- * opacity: 1 is the CSS default (FINAL visible state).
- * GSAP drives the entrance from opacity: 0.01 → 1 each run via fromTo.
- * No inline opacity on the element — avoids the Nav bug where a hard-coded
- * 0.01 left the image permanently near-invisible after ctx.revert().
+ * Portrait inside ( ) — height ≈ the giant's cap height, 3/4 crop.
+ * opacity:1 is the CSS default (final visible state); GSAP drives the
+ * 0.01 → 1 media fade, so a revert leaves it visible.
  */
 .hero-portrait-img {
-  height: 0.78em;
+  height: max(2rem, min(11vw, 16svh));
   aspect-ratio: 3 / 4;
   object-fit: cover;
   display: block;
   flex-shrink: 0;
-  /* Subtle top-crop to show the face: object-position centres on the upper half */
-  object-position: center 20%;
+  object-position: center 18%;
 }
 
 /* ── 1px hairline rule ────────────────────────────────────────────────────── */
@@ -587,27 +553,29 @@
 
 /* ── Mobile: <=640px ─────────────────────────────────────────────────────── */
 /*
- * On narrow viewports the portrait becomes very small (em-scaled).
- * No layout changes needed — the flex row collapses naturally.
- * Reduce the upward bias so content doesn't crowd the nav.
+ * Centre the giants (matching Adcker's mobile hero). A trailing aside that
+ * can't fit beside its giant wraps and centres below it.
  */
 @media (max-width: 640px) {
+  .hero-content {
+    padding-top: 4rem;
+    justify-content: center;
+  }
+
   .hero-headline-block {
+    align-items: center;
+    text-align: center;
+    width: 100%;
     margin-bottom: 4vh;
   }
 
-  .hero-content {
-    padding-top: 4rem;
+  .hero-display {
+    align-items: center;
   }
 
-  /*
-   * On narrow screens the widest line — "( ◉ ) MODELS" (parens + inline
-   * portrait + word) — overflows at the 12vw display size and gets clipped by
-   * the hero's overflow:hidden. Cap to a width-proportional size so the whole
-   * line always fits the column. Still height-bounded by 20svh.
-   */
-  .hero-display {
-    font-size: min(13vw, 20svh);
+  .hero-line,
+  .hero-line--machine {
+    justify-content: center;
   }
 }
 
