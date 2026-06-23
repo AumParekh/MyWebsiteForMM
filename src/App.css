@@ -501,6 +501,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.12em;
+  /* The portrait is a touch taller than the giant's cap height, so centering
+     leaves it dipping below the baseline. Lift it to sit on the caps. */
+  transform: translateY(-9%);
 }
 
 /* Parenthesis glyphs flanking the portrait — sized between giant and aside. */
@@ -576,6 +579,12 @@
  * Centre the giants (matching Adcker's mobile hero). A trailing aside that
  * can't fit beside its giant wraps and centres below it.
  */
+/*
+ * Mobile — a completely different, Adcker-style treatment: ONLY the giant words
+ * stacked and centred, with the portrait inline in ( ) under SYSTEMS. The serif
+ * asides, hairline rule and ( scroll ) cue are all dropped so the giants carry
+ * the screen, exactly like Adcker's mobile hero.
+ */
 @media (max-width: 640px) {
   .hero-content {
     padding-top: 4rem;
@@ -586,17 +595,12 @@
     align-items: center;
     text-align: center;
     width: 100%;
-    margin-bottom: 4vh;
+    margin-bottom: 0;
   }
 
-  /*
-   * Read as three clear stanzas: a big gap BETWEEN the lines, tight spacing
-   * WITHIN each (the leading aside, the giant, and the trailing aside group as
-   * one unit) — otherwise the small asides scatter between the giants.
-   */
   .hero-display {
     align-items: center;
-    gap: 1.4rem;
+    gap: 0.12em;            /* giants stack close, Adcker-tight */
   }
 
   .hero-line,
@@ -607,12 +611,23 @@
     row-gap: 0.04em;
   }
 
-  /* Stack SYSTEMS over its ( portrait ) on mobile so the unit never overflows
-     a narrow row. */
+  /* Bigger giants now that they own the screen. */
+  .hero-giant {
+    font-size: min(17vw, 26svh);
+  }
+
+  /* SYSTEMS sits above its ( portrait ), kept inline as one row. */
   .hero-machine-core {
     flex-direction: column;
     align-items: center;
-    row-gap: 0.04em;
+    row-gap: 0.1em;
+  }
+
+  /* Strip the marginalia, rule and scroll cue — giants only. */
+  .hero-aside,
+  .hero-rule,
+  .hero-scroll-indicator {
+    display: none;
   }
 }
 
