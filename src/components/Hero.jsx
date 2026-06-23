@@ -100,19 +100,21 @@ export default function Hero() {
             {/* Line 3 — SYSTEMS with the inline ( portrait ) */}
             <span className="hero-line hero-line--machine">
               <span className="hero-aside" aria-hidden="true">intelligent</span>
-              <span className="hero-giant-clip">
-                <span className="hero-giant" aria-hidden="true">systems</span>
-              </span>
-              {/* Wrapper keeps ( portrait ) on one row even when the line
-                  switches to a vertical column on mobile. */}
-              <span className="hero-portrait-group">
-                <span className="hero-paren" aria-hidden="true">(</span>
-                <img
-                  src={`${import.meta.env.BASE_URL}aum-hero.webp`}
-                  alt="Aum Parekh"
-                  className="hero-portrait-img"
-                />
-                <span className="hero-paren" aria-hidden="true">)</span>
+              {/* Giant + portrait stay together as one justified unit so
+                  space-between never splits SYSTEMS from its ( portrait ). */}
+              <span className="hero-machine-core">
+                <span className="hero-giant-clip">
+                  <span className="hero-giant" aria-hidden="true">systems</span>
+                </span>
+                <span className="hero-portrait-group">
+                  <span className="hero-paren" aria-hidden="true">(</span>
+                  <img
+                    src={`${import.meta.env.BASE_URL}aum-hero.webp`}
+                    alt="Aum Parekh"
+                    className="hero-portrait-img"
+                  />
+                  <span className="hero-paren" aria-hidden="true">)</span>
+                </span>
               </span>
               <span className="hero-aside" aria-hidden="true">think alongside me</span>
             </span>

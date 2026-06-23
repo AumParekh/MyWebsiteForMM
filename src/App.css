@@ -413,7 +413,8 @@
 .hero-headline-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;   /* left-aligned giants */
+  align-items: stretch;      /* lines span the full width so they can justify */
+  width: 100%;
   margin-bottom: 4vh;        /* slight upward bias from true centre */
 }
 
@@ -422,6 +423,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.04em;               /* giants stack tight, nearly touching */
+  width: 100%;
   margin: 0;
   color: var(--ink);
   font-family: var(--sans);
@@ -436,13 +438,21 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
+  justify-content: space-between;  /* push asides to the margins — justified */
   column-gap: 0.3em;
   row-gap: 0.1em;
 }
-/* The MACHINE line centres items so the portrait sits on the giant's axis. */
+/* The SYSTEMS line centres items so the portrait sits on the giant's axis. */
 .hero-line--machine {
   align-items: center;
   column-gap: 0.28em;
+}
+
+/* Giant + portrait as one justified unit (so space-between can't split them). */
+.hero-machine-core {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
 }
 
 /*
@@ -473,9 +483,11 @@
   white-space: nowrap;
 }
 
-/* Small Bodoni serif aside — the "whisper" against the giant "shout". */
+/* Small Bodoni serif aside — the "whisper" against the giant "shout".
+   Italic for the Adcker marginalia feel (italic face loaded just for this). */
 .hero-aside {
   font-family: var(--serif);
+  font-style: italic;
   font-weight: 400;
   font-size: clamp(0.9rem, 1.7vw, 1.6rem);
   line-height: 1.1;
@@ -592,6 +604,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    row-gap: 0.04em;
+  }
+
+  /* Stack SYSTEMS over its ( portrait ) on mobile so the unit never overflows
+     a narrow row. */
+  .hero-machine-core {
+    flex-direction: column;
+    align-items: center;
     row-gap: 0.04em;
   }
 }
