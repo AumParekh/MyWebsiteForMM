@@ -2,9 +2,21 @@ import { useEffect, useState } from 'react'
 import SocraticArticle from './SocraticArticle.jsx'
 
 /*
- * Full-screen project reader: frosted backdrop, glass panel that slides up on
- * open, sticky action bar (copy share link / close). Esc and backdrop-click
- * dismiss. Behaviour matches the original; only the presentation changed.
+ * ProjectModal — phase 3e reskin
+ *
+ * Behaviour preserved from original:
+ *   - Esc-to-close, backdrop-click-to-close (panel stopPropagation)
+ *   - Body scroll-lock while open
+ *   - Copy-share-link with "Link copied" feedback (2.2 s)
+ *   - role="dialog", aria-modal, sr-only "Close" text
+ *   - Renders <SocraticArticle /> when project.id === 'socratic'
+ *
+ * Presentation — bone/ink editorial drawer:
+ *   - Backdrop: near-opaque bone, blur(4px), fades in
+ *   - Desktop (>768 px): right-aligned drawer, 65 vw, slides in from right
+ *   - Mobile (≤768 px): full-width, slides up from bottom
+ *   - CSS animation on .project-modal-panel with animation-fill-mode: both
+ *   - Reduced-motion: panel appears instantly (no animation)
  */
 export default function ProjectModal({ project, onClose }) {
   const [linkCopied, setLinkCopied] = useState(false)
@@ -55,12 +67,11 @@ export default function ProjectModal({ project, onClose }) {
         className="project-modal-panel"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Sticky actions bar — close + copy-link */}
         <div className="project-modal-actions">
           <button
             type="button"
-            className={`project-modal-share ${
-              linkCopied ? 'project-modal-share--copied' : ''
-            }`}
+            className={`project-modal-share${linkCopied ? ' project-modal-share--copied' : ''}`}
             onClick={copyShareLink}
           >
             {linkCopied ? 'Link copied' : 'Copy link'}
@@ -75,7 +86,9 @@ export default function ProjectModal({ project, onClose }) {
             <span className="sr-only">Close</span>
           </button>
         </div>
-        <div id="project-modal-title">
+
+        {/* Article content */}
+        <div id="project-modal-title" className="project-modal-body">
           {project.id === 'socratic' && <SocraticArticle />}
         </div>
       </div>

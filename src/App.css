@@ -1,1466 +1,1456 @@
-/* ============================================================================
-   Component styles
-   "Studio Aurora": deep #0F1115 base, electric-indigo accent, Bricolage 800
-   display with Hanken Grotesk UI. Motion: masked char reveals, IO-driven
-   rise/unblur reveals, pointer tilt + glow, marquee, magnetic CTAs.
-============================================================================ */
+/* SKELETON — rebuilt per-component in phases 3b–3g */
 
 .site {
   position: relative;
 }
 
-/* ----------------------------------------------------------------- motion */
+/* ----------------------------------------------------------------- reveal --
+   Phase 3f — scroll reveal. Both states use ONLY transform + clip-path (paint-
+   only), so a grid/flex Tag is never disturbed (no inner wrapper needed).
 
+   Hidden state: pushed down + clipped away at the bottom (inset bottom 100% =
+   nothing shows). Horizontal insets are negative so italic overhangs and the
+   ( ) glyphs are never side-clipped. On reveal it rises and uncovers —
+   a clip-mask, not a fade (text never fades, per the design rules). */
 .reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  filter: blur(8px);
+  transform: translateY(38px);
+  clip-path: inset(0 -12% 100% -12%);
   transition:
-    opacity var(--dur) var(--ease-out),
-    transform var(--dur) var(--ease-out),
-    filter var(--dur) var(--ease-out);
+    transform 0.7s var(--ease-tx),
+    clip-path 0.7s var(--ease-tx);
+  will-change: transform, clip-path;
 }
 
 .reveal--in {
-  opacity: 1;
+  transform: translateY(0);
+  /* -12% bottom too, so descenders/shadows aren't clipped at rest */
+  clip-path: inset(0 -12% -12% -12%);
+}
+
+/* Media variant — the one allowed fade: images only, opacity 0.01 → 1. */
+.reveal--media {
   transform: none;
-  filter: none;
+  clip-path: none;
+  opacity: 0.01;
+  transition: opacity 0.7s var(--ease-media);
 }
-
-.magnetic {
-  display: inline-block;
-  transition: transform 0.35s var(--ease-snap);
-  will-change: transform;
-}
-
-.tilt {
-  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform 0.25s ease-out;
-  will-change: transform;
-}
-
-/* --------------------------------------------------------- cursor glow ---
-   Ambient "aurora light" easing toward the pointer. The outer element is
-   positioned by JS (translate3d); the inner core carries the look and scales
-   up over interactive targets. Screen blend so it reads as light over the
-   dark base. Sits above content but below the nav (50) and modal (100).
-   Only ever rendered active on fine pointers without reduced motion. */
-.cursor-glow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 40;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  will-change: transform;
-}
-
-.cursor-glow--on {
+.reveal--media.reveal--in {
   opacity: 1;
 }
 
-.cursor-glow-core {
-  position: absolute;
-  width: 440px;
-  height: 440px;
-  margin: -220px 0 0 -220px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(109, 123, 255, 0.18) 0%,
-    rgba(109, 123, 255, 0.07) 40%,
-    rgba(109, 123, 255, 0) 70%
-  );
-  mix-blend-mode: screen;
-  filter: blur(6px);
-  transform: scale(1);
-  transition: transform 0.5s var(--ease-out);
-}
-
-.cursor-glow--active .cursor-glow-core {
-  transform: scale(1.4);
-}
-
-/* ------------------------------------------------------------ 3D scene ---
-   Real DOM suspended in a CSS-3D space, with a raw-WebGL fog field behind.
-   Everything here is scoped to .is-3d, which Scene3D only adds when WebGL is
-   available and motion is allowed — otherwise the flat layout is untouched. */
-.fog-field {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  pointer-events: none;
-  display: block;
-}
-
-/* Lift the real content above the fog */
-.is-3d .hero,
-.is-3d main,
-.is-3d .footer {
-  position: relative;
-  z-index: 1;
-}
-
-/* Footer (contact) sits clearly above the fog at the end of the space */
-.is-3d .footer {
-  z-index: 2;
-}
-
-/* Dissolve the flat section bands so the fog becomes the environment */
-.is-3d .section,
-.is-3d .section--light,
-.is-3d .section--accent {
-  background: transparent;
-  border-color: transparent;
-  perspective: 1300px;
-}
-
-/* Each section's content is a plane floating in its section's perspective */
-.is-3d .section-inner {
-  position: relative;
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-}
-
-/* Key-light halo that strengthens as the camera nears (driven by --lit) */
-.is-3d .section-inner::before {
-  content: '';
-  position: absolute;
-  inset: -10% -8%;
-  z-index: -1;
-  border-radius: 28px;
-  background: radial-gradient(
-    62% 55% at 50% 12%,
-    rgba(150, 162, 255, calc(var(--lit, 0) * 0.12)),
-    transparent 70%
-  );
-  pointer-events: none;
-}
-
-/* ------------------------------------------------------- wormhole portal ---
-   Full-screen overlay for the WebGL portal transition (and its plain-DOM fade
-   fallback). Sits above everything — nav (50), modal (100), grain (9999).
-   Idle: invisible and click-through; activated only during a transition. */
-.wormhole-canvas,
-.wormhole-fade {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  pointer-events: none;
-  opacity: 0;
-}
-
-.wormhole-canvas.is-active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.wormhole-fade {
-  background: #0b0d12;
-  transition: opacity 0.18s ease;
-}
-
-.wormhole-fade.is-active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* -------------------------------------------------------------------- nav */
-
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  padding: 1.1rem var(--gutter);
-  transition: padding 0.45s ease;
-}
-
-.nav--scrolled {
-  padding-top: 0.6rem;
-  padding-bottom: 0.6rem;
-}
-
-/* Floating glass pill. Note: the mobile overlay must stay OUTSIDE this
-   element — its backdrop-filter makes it the containing block for fixed
-   descendants on iOS/WebKit. */
-.nav-pill {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: 0.55rem 0.7rem 0.55rem 1.5rem;
-  border-radius: 999px;
-}
-
-.nav-brand {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-decoration: none;
-  position: relative;
-  z-index: 2;
-}
-
-.nav-brand-dot {
-  color: var(--accent);
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.nav-links a {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--ink-dim);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover,
-.nav-links a:focus-visible {
-  color: var(--ink);
-}
-
-/* Full-screen mobile menu — sibling of the pill, never inside it */
-.nav-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.9rem;
-  background: rgba(15, 17, 21, 0.94);
-  -webkit-backdrop-filter: blur(22px);
-  backdrop-filter: blur(22px);
-  animation: modalFade 0.35s ease both;
-}
-
-.nav-overlay a {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  text-decoration: none;
-  opacity: 0;
-  transform: translateY(16px);
-  animation: overlayLink 0.5s var(--ease-out) forwards;
-  animation-delay: calc(0.08s + var(--i) * 0.06s);
-}
-
-@keyframes overlayLink {
-  to {
-    opacity: 1;
+/* Reduced motion: everything visible, no transform/clip/fade. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal--media {
     transform: none;
+    clip-path: none;
+    opacity: 1;
   }
 }
 
+/* ===== NAV (phase 3b) ===================================================== */
+
+/*
+ * Reading-progress hairline — sits at the absolute top of the viewport.
+ * Height is 1px; transform-origin left so scaleX(0→1) grows left-to-right.
+ * JS writes el.style.transform directly (no re-render) on every scroll tick.
+ */
 .nav-progress {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 1px;
+  z-index: 201;        /* above overlay (150) and bar (200) */
+  pointer-events: none;
   overflow: hidden;
 }
-
 .nav-progress-bar {
-  display: block;
+  width: 100%;
   height: 100%;
-  background: var(--grad-accent);
+  background: var(--ink);
   transform: scaleX(0);
-  transform-origin: left;
+  transform-origin: left center;
+  /* No transition here — JS drives this at 60fps via requestAnimationFrame */
 }
 
+/* ── Resting top bar ─────────────────────────────────────────────────────── */
+/*
+ * Fixed, full-width, no pill / glass / backdrop-filter.
+ * Two items: wordmark (left) and Menu/Close toggle (right).
+ * z-index 200 so it sits ABOVE the overlay (z 150) — the Menu/Close toggle and
+ * wordmark must stay visible and clickable while the overlay is open.
+ */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem var(--gutter);
+  /* No background — bone page shows through when overlay is closed */
+  pointer-events: none;   /* let clicks fall through the transparent area */
+}
+/* Re-enable pointer events on interactive children only */
+.nav-bar > * {
+  pointer-events: auto;
+}
+
+/*
+ * While the overlay is open, the bar sits on top of the ink panel.
+ * The wordmark and toggle colours flip to --bone for legibility.
+ */
+.nav-bar--open .nav-wordmark,
+.nav-bar--open .nav-toggle {
+  color: var(--bone);
+}
+
+/* Wordmark: "aum." — Kumbh Sans 700, lowercase, tight tracking */
+.nav-wordmark {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.25s var(--ease-tx);
+}
+
+/* Menu / Close button — uppercase label, no border/bg */
 .nav-toggle {
-  display: none;
-  position: relative;
-  z-index: 2;
-  width: 44px;
-  height: 44px;
-  padding: 0;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink);
   background: none;
   border: 0;
-  cursor: pointer;
+  padding: 0;
+  transition: color 0.25s var(--ease-tx);
 }
 
-.nav-toggle span {
-  position: absolute;
-  left: 10px;
-  width: 24px;
-  height: 2px;
+/* ── Full-screen ink overlay ─────────────────────────────────────────────── */
+/*
+ * Solid --ink background fills the viewport.
+ * Three-column grid: nav links | portrait | contact.
+ * GSAP controls autoAlpha (opacity + visibility) on open.
+ */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
   background: var(--ink);
-  border-radius: 2px;
-  transition: transform 0.35s var(--ease-out), top 0.35s var(--ease-out);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--gutter);
+  padding: calc(var(--gutter) * 2) var(--gutter);
+  /*
+   * Default state is VISIBLE on purpose. GSAP animates the entrance FROM
+   * autoAlpha 0 each time the overlay mounts; if GSAP is ever reverted
+   * (e.g. React 18 StrictMode double-invokes the layout effect), the element
+   * falls back to this visible state instead of being stuck hidden.
+   * NOTE: visibility inherits — a hidden default here hides every child too.
+   */
 }
 
-.nav-toggle span:nth-child(1) {
-  top: 18px;
+/* ── Left column: primary nav links ──────────────────────────────────────── */
+.nav-overlay__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+  padding-left: var(--gutter);
 }
 
-.nav-toggle span:nth-child(2) {
-  top: 25px;
+/*
+ * Primary link — clip-flip hover effect (Adcker signature):
+ *   Outer <a> clips overflow so neither sliding label escapes.
+ *   Inside: two layers stacked via absolute positioning.
+ *     .nav-primary-link__sans  — default, slides UP on hover (translateY -100%)
+ *     .nav-primary-link__serif — italic, slides IN from below on hover (translateY 0)
+ *   Both layers stay --bone. Transition uses --ease-tx for the "snap" feel.
+ */
+.nav-primary-link {
+  display: block;
+  /*
+   * width:max-content + nowrap make the clip box exactly as wide as the label,
+   * so overflow:hidden (needed for the vertical clip-flip) can never cut the
+   * text horizontally. Font is sized so even the longest label
+   * ("AI & WORKFLOWS") fits the side column without colliding with the portrait.
+   */
+  width: max-content;
+  white-space: nowrap;
+  overflow: hidden;          /* clips the two sliding layers vertically */
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3.4vw, 2.8rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  color: var(--bone);
+  text-decoration: none;
+  /* GSAP animates opacity/translateY on the <a> itself during open */
 }
 
-.nav--open .nav-toggle span:nth-child(1) {
-  top: 21px;
-  transform: rotate(45deg);
+/* Inner wrapper: positioning context for the overlaid serif layer.
+   Height comes from the in-flow sans label below. */
+.nav-primary-link__inner {
+  display: block;
+  position: relative;
 }
 
-.nav--open .nav-toggle span:nth-child(2) {
-  top: 21px;
-  transform: rotate(-45deg);
+/* Shared layer styling for both labels */
+.nav-primary-link__sans,
+.nav-primary-link__serif {
+  display: block;
+  white-space: nowrap;
+  transition: transform 0.5s var(--ease-tx);
+  will-change: transform;
+  color: var(--bone);
+  line-height: 0.95;
 }
 
-/* ------------------------------------------------------------------- hero */
+/* Sans label is IN-FLOW — it establishes the box width AND height. Without an
+   in-flow layer here, width:max-content on the link collapses to 0 (both layers
+   were absolute → no content width). Slides up out of the clip on hover. */
+.nav-primary-link__sans {
+  position: relative;
+}
 
+/* Serif italic duplicate is absolutely overlaid, waiting one line below the
+   clip; slides up into view on hover. width:100% = the sans box width. */
+.nav-primary-link__serif {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  transform: translateY(100%);
+}
+
+/* Hover: push sans up, pull serif in */
+.nav-primary-link:hover .nav-primary-link__sans {
+  transform: translateY(-100%);  /* exits upward through the clip */
+}
+.nav-primary-link:hover .nav-primary-link__serif {
+  transform: translateY(0);      /* enters from below */
+}
+
+/* ── Center column: portrait inside ( ) ──────────────────────────────────── */
+.nav-overlay__portrait {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* GSAP fades the whole group in with the contact column */
+}
+
+/* The literal parenthesis characters flanking the portrait */
+.nav-portrait-paren {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  color: var(--bone);
+  line-height: 1;
+  user-select: none;
+}
+
+/*
+ * Portrait image: 3/4 aspect ratio, object-fit cover.
+ * Starts at opacity 0.01 (inline style) — GSAP fades the parent group to 1.
+ */
+.nav-portrait-img {
+  width: min(30vw, 16rem);
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Right column: contact links ─────────────────────────────────────────── */
+.nav-overlay__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-right: var(--gutter);
+  /* GSAP fades this in with the portrait group */
+}
+
+/*
+ * Contact link — underline-redraw on hover:
+ *   A 1px --bone ::after pseudo-element starts at scaleX(0) (transform-origin
+ *   left) and scales to scaleX(1) on hover using --ease-link for the "draw"
+ *   feel. No colour change; stays --bone throughout.
+ */
+.nav-contact-link {
+  position: relative;
+  display: inline-block;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--bone);
+  text-decoration: none;
+}
+.nav-contact-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--bone);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease-link);
+}
+.nav-contact-link:hover::after {
+  transform: scaleX(1);  /* underline draws from left to right */
+}
+
+/* ── Mobile: <=860px ─────────────────────────────────────────────────────── */
+/*
+ * Single-column layout: links centred, portrait hidden, contact below links.
+ */
+@media (max-width: 860px) {
+  .nav-overlay {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    justify-items: center;
+    padding-top: 5rem;   /* clear the top bar */
+  }
+
+  .nav-overlay__links {
+    align-items: center;
+    padding-left: 0;
+    text-align: center;
+  }
+
+  /* Hide portrait on mobile */
+  .nav-overlay__portrait {
+    display: none;
+  }
+
+  .nav-overlay__contact {
+    align-items: center;
+    padding-right: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem;
+  }
+}
+
+/* ===== END NAV ============================================================ */
+
+/* ===== HERO (phase 3c) ==================================================== */
+
+/*
+ * Full-screen bone section. Uses CSS Grid to layer content vertically.
+ * The portrait sits inline inside a display-scale flex row on line 2.
+ *
+ * Motion notes (GSAP entrance):
+ *   - Every element below has its FINAL visible state as the CSS default.
+ *     GSAP fromTo sets the hidden start on each run; ctx.revert() therefore
+ *     falls back to these visible defaults rather than leaving content hidden.
+ *   - .hero-clip / .hero-display-line-clip — overflow:hidden containers for
+ *     the clip-mask translateY reveal on the aside and display lines.
+ *   - .hero-portrait-img — opacity:1 by default (GSAP drives 0.01→1 entrance).
+ *   - .hero-rule — transform defaults intentionally absent from CSS so GSAP
+ *     scaleX animation starts clean; revert restores scale(1) naturally since
+ *     no CSS transform is set (browser default).
+ *   - .hero-scroll-indicator — opacity pulse is a CSS animation; GSAP only
+ *     handles the initial fade-in; after that the keyframe loop takes over.
+ */
+
+/* ── Root section ─────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
   min-height: 100svh;
+  background: var(--bone);
+  color: var(--ink);
+  /* Grid: content row takes remaining height, indicator row is auto */
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 0 var(--gutter) calc(var(--gutter) * 1.5);
+  overflow: hidden;  /* ensure nothing escapes during translate entrances */
+}
+
+/* ── Content wrapper — vertically centred, slight upward bias ─────────────── */
+/*
+ * The single grid cell that spans 1fr. Flex centering pushes .hero-headline-block
+ * to the vertical centre; margin-bottom:8vh provides the upward bias so the
+ * headline reads slightly above true centre (standard editorial treatment).
+ */
+.hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 4rem;           /* clear the fixed nav bar */
+}
+
+/* ── Headline block — aside + display lines + rule ────────────────────────── */
+.hero-headline-block {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* Aside aligns with the left edge of the headline. Both are left-aligned. */
+  align-items: flex-start;
+  /* Upward offset: pull the whole block up slightly from true centre */
+  margin-bottom: 4vh;
+}
+
+/* ── Clip container (overflow:hidden wrapper for translateY reveals) ───────── */
+/*
+ * Both the aside clip and the display-line clips use this pattern.
+ * overflow:hidden is the only purpose; the inner element slides through it.
+ * Line-height must closely match the inner element's line-height so the clip
+ * is exactly one line tall — preventing adjacent lines leaking into the mask.
+ */
+.hero-clip {
   overflow: hidden;
-  /* Signature aurora glow — also the static fallback if WebGL is missing:
-     soft indigo radial bleeding off the top-right corner, no hard edges */
-  background:
-    radial-gradient(
-      circle 520px at 82% 4%,
-      rgba(109, 123, 255, 0.42) 0%,
-      rgba(109, 123, 255, 0.1) 42%,
-      rgba(15, 17, 21, 0) 70%
-    ),
-    var(--bg);
 }
 
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+/* Aside clip: sized to one line of the serif text */
+.hero-aside-clip {
+  line-height: 1.3;
+  margin-bottom: 0.4em;  /* gap between aside and headline */
 }
 
-.hero-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* 3D particle galaxy: additive glow layered as light over the aurora */
-.hero-particles {
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-/* Soft fade into the page below */
-.hero-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 62%, var(--bg) 100%);
-}
-
-/* Centered single-column composition over the full-bleed backdrop */
-.hero-inner {
-  position: relative;
-  z-index: 1;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: clamp(7rem, 16vh, 9rem) var(--gutter) 7rem;
-}
-
-/* Soft scrim so the headline reads cleanly over the bright galaxy core */
-.hero-inner::before {
-  content: '';
-  position: absolute;
-  inset: -12% -25%;
-  z-index: -1;
-  background: radial-gradient(
-    58% 48% at 50% 52%,
-    rgba(15, 17, 21, 0.6),
-    rgba(15, 17, 21, 0) 72%
-  );
-  pointer-events: none;
-}
-
-.eyebrow {
-  display: inline-block;
-  font-family: var(--font-label);
-  font-size: var(--text-label);
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.7s ease 0.15s, transform 0.7s var(--ease-out) 0.15s;
-}
-
-.hero--in .eyebrow {
-  opacity: 1;
-  transform: none;
-}
-
-.hero-title {
-  margin: 1.6rem 0 1.7rem;
-  font-family: var(--font-display);
-  font-size: var(--text-hero);
-  font-weight: 800;
-  line-height: 0.98;
-  letter-spacing: -0.03em;
-}
-
-/* Bricolage has no italics — the accent word is highlighted in indigo instead */
-.hero-title em {
-  font-family: inherit;
-  font-style: normal;
-}
-
-/* Whole headline carries the white vertical falloff. The gradient is clipped
-   per character span, not on a parent: WebKit/iOS fails to apply parent-level
-   background-clip:text when descendants are transformed (the animated chars),
-   which renders the text invisible on phones. */
-.hero-title .hero-char {
-  background: linear-gradient(180deg, #edeff4 0%, #d4d8e6 60%, #b9bfd4 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.hero-title em .hero-char {
-  background: linear-gradient(180deg, var(--accent-2) 0%, var(--accent) 90%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Masked line: chars rise out of the overflow clip */
-.hero-line {
+/* Display-line clip: sized to one display-scale line */
+.hero-display-line-clip {
+  line-height: var(--display-lh);
+  /* A tiny buffer below the line so descenders aren't clipped on revert */
+  padding-bottom: 0.04em;
+  /* Block display so lines stack */
   display: block;
-  overflow: hidden;
-  padding-bottom: 0.09em;
-  margin-bottom: -0.09em;
 }
 
-.hero-word {
-  display: inline-block;
-  white-space: nowrap;
-}
-
-.hero-char {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(115%) rotate(5deg);
-  transition:
-    transform 0.9s var(--ease-out) calc(0.3s + var(--i) * 0.02s),
-    opacity 0.45s linear calc(0.3s + var(--i) * 0.02s);
-  will-change: transform;
-}
-
-.hero--in .hero-char {
-  opacity: 1;
-  transform: none;
-}
-
-.hero-sub {
-  max-width: 36rem;
-  margin: 0 auto 2.6rem;
-  font-size: var(--text-lede);
-  font-weight: 300;
-  line-height: 1.75;
-  color: var(--ink-dim);
-}
-
-.hero-sub,
-.hero-cta {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.8s ease 1.15s, transform 0.8s var(--ease-out) 1.15s;
-}
-
-.hero-cta {
-  transition-delay: 1.35s;
-}
-
-.hero--in .hero-sub,
-.hero--in .hero-cta {
-  opacity: 1;
-  transform: none;
-}
-
-.hero-cta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-}
-
-/* ---------------------------------------------------------------- buttons */
-
-.btn {
-  display: inline-block;
-  padding: 0.85rem 2.4rem;
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  text-decoration: none;
-  border-radius: 999px;
-  transition:
-    transform 0.3s var(--ease-snap),
-    box-shadow 0.3s ease,
-    border-color 0.3s ease,
-    background-color 0.3s ease,
-    color 0.3s ease,
-    opacity 0.3s ease;
-}
-
-.btn--primary {
-  color: var(--bg);
-  background: var(--accent);
-  font-weight: 600;
-  box-shadow: 0 8px 28px -10px rgba(109, 123, 255, 0.55);
-}
-
-.btn--primary:hover,
-.btn--primary:focus-visible {
-  opacity: 0.92;
-  transform: translateY(-2px);
-  box-shadow: 0 14px 36px -10px rgba(109, 123, 255, 0.65);
-}
-
-.btn--ghost {
+/* ── Serif italic aside ──────────────────────────────────────────────────────*/
+/*
+ * "I work at the intersection of"
+ * Bodoni Moda italic; clamp-sized so it scales proportionally with the display.
+ * Starts at translateY(100%) via GSAP; CSS default is translateY(0) (visible).
+ */
+.hero-aside {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1rem, 2vw, 1.6rem);
   color: var(--ink);
-  border: 1px solid var(--line-strong);
-  background: transparent;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
-.btn--ghost:hover,
-.btn--ghost:focus-visible {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.02);
-  transform: translateY(-2px);
-}
-
-/* ---------------------------------------------------------- about portrait */
-
-.portrait {
-  position: relative;
-  width: min(100%, 17rem);
-  margin-top: 2.4rem;
-}
-
-.portrait-deco {
-  position: absolute;
-  inset: -14%;
-  background: radial-gradient(
-    50% 50% at 50% 40%,
-    rgba(109, 123, 255, 0.26),
-    transparent 70%
-  );
-  filter: blur(42px);
-  z-index: 0;
-}
-
-.portrait-frame {
-  position: relative;
-  z-index: 1;
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--bg-raise);
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 32px 70px -28px rgba(0, 0, 0, 0.85);
-}
-
-.portrait-frame img {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.9) contrast(1.04);
-  transition: transform 0.8s var(--ease-out), filter 0.8s ease;
-}
-
-.portrait:hover .portrait-frame img {
-  transform: scale(1.035);
-  filter: saturate(1) contrast(1.02);
-}
-
-/* Spotlight reveal: a second exposure surfaced beneath the first through a
-   soft circular mask that follows the cursor — "a thinker between two worlds".
-   The higher-specificity selector keeps the opacity transition from being
-   clobbered by the shared .portrait-frame img rule above, while still riding
-   its hover scale so both layers stay registered. */
-.portrait-frame .portrait-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.92) contrast(1.04);
-  opacity: 0;
-  --sx: 50%;
-  --sy: 50%;
-  -webkit-mask-image: radial-gradient(
-    circle 92px at var(--sx) var(--sy),
-    #000 0%,
-    #000 42%,
-    transparent 74%
-  );
-  mask-image: radial-gradient(
-    circle 92px at var(--sx) var(--sy),
-    #000 0%,
-    #000 42%,
-    transparent 74%
-  );
-  transition:
-    opacity 0.5s var(--ease-out),
-    transform 0.8s var(--ease-out),
-    filter 0.8s ease;
-}
-
-.portrait-overlay--on {
-  opacity: 1;
-}
-
-.portrait-fallback {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-display);
-  font-size: 3.2rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: var(--accent-2);
-}
-
-.portrait-caption {
-  position: relative;
-  z-index: 1;
-  display: block;
-  margin-top: 0.9rem;
-  font-family: var(--font-label);
-  font-size: var(--text-label);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  text-align: center;
-}
-
-/* ---------------------------------------------------------------- marquee */
-
-.hero-marquee {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--line);
-  padding: 1.1rem 0;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 12%,
-    #000 88%,
-    transparent
-  );
-  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
-}
-
-.hero-marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee 30s linear infinite;
-}
-
-.hero-marquee-group {
-  display: flex;
-  gap: 2.6rem;
-  padding-right: 2.6rem;
-  font-family: var(--font-label);
-  font-size: 0.78rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  white-space: nowrap;
-}
-
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.hero-scroll-hint {
-  position: absolute;
-  bottom: 4.6rem;
-  left: 50%;
-  z-index: 1;
-  transform: translateX(-50%);
-}
-
-.hero-scroll-line {
-  display: block;
-  width: 1px;
-  height: 44px;
-  background: linear-gradient(to bottom, transparent, var(--accent));
-  animation: scrollHint 2.4s var(--ease-out) infinite;
-}
-
-@keyframes scrollHint {
-  0% {
-    transform: scaleY(0);
-    transform-origin: top;
-  }
-  45% {
-    transform: scaleY(1);
-    transform-origin: top;
-  }
-  55% {
-    transform: scaleY(1);
-    transform-origin: bottom;
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
-  }
-}
-
-/* --------------------------------------------------------------- sections */
-
-.section {
-  position: relative;
-  padding: var(--space-section) var(--gutter);
-  scroll-margin-top: 4.5rem;
-}
-
-.section--light {
-  background: var(--bg-elev);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.section--accent {
-  /* Second (and last) appearance of the aurora glow */
-  background:
-    radial-gradient(
-      circle 520px at 85% 0%,
-      rgba(109, 123, 255, 0.3) 0%,
-      rgba(109, 123, 255, 0.08) 42%,
-      rgba(15, 17, 21, 0) 70%
-    ),
-    var(--bg);
-  text-align: center;
-}
-
-.section-inner {
-  max-width: var(--container);
-  margin: 0 auto;
-}
-
-.section-inner--split {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: clamp(2.5rem, 6vw, 6rem);
-  align-items: start;
-}
-
-.section-head--row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: clamp(2rem, 5vw, 5rem);
-  margin-bottom: clamp(2.5rem, 6vh, 4rem);
-}
-
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  font-family: var(--font-label);
-  font-size: var(--text-label);
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.section-label::before {
-  content: '';
-  width: 1.6rem;
-  height: 1px;
-  background: var(--grad-accent);
-}
-
-.section--accent .section-label::after {
-  content: '';
-  width: 1.6rem;
-  height: 1px;
-  background: var(--grad-accent);
-}
-
-.section-title {
-  margin: 1.1rem 0 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h2);
-  font-weight: 800;
-  line-height: 1.04;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-  color: var(--ink);
-}
-
-/* Bricolage has no italics — accent words go indigo instead */
-.section-title em {
-  font-family: inherit;
-  font-style: normal;
-  background: linear-gradient(120deg, var(--accent-2), var(--accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.section-title--center {
-  margin-inline: auto;
-}
-
-.section-lede {
-  max-width: 30rem;
   margin: 0;
-  font-size: var(--text-lede);
-  font-weight: 300;
-  line-height: 1.75;
-  color: var(--ink-dim);
+  line-height: 1.3;
+  /* translateY(0) is the CSS default — GSAP fromTo overrides on each run */
 }
 
-.section-lede--center {
-  max-width: 40rem;
-  margin: 1.4rem auto 0;
+/* ── Display headline ────────────────────────────────────────────────────────*/
+/*
+ * <h1> holds three .hero-display-line-clip wrappers.
+ * font-size: var(--display) = calc(0.75em + 12vw) — scales with viewport.
+ * line-height: var(--display-lh) = 0.78 — lines sit tight, nearly touching.
+ * letter-spacing: var(--display-ls) = -0.05em — optical tightening.
+ */
+.hero-display {
+  font-family: var(--sans);
+  font-weight: 700;
+  /*
+   * Width-based --display (calc(0.75em + 12vw)) is the intent, but three stacked
+   * lines at that size overflow short viewports and push the ( scroll ) indicator
+   * below the fold. Cap against viewport HEIGHT (svh, matching min-height:100svh)
+   * so the whole hero — aside + 3 lines + rule + indicator — always fits one
+   * screen while staying large on tall displays.
+   */
+  font-size: min(var(--display), 20svh);
+  line-height: var(--display-lh);
+  letter-spacing: var(--display-ls);
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+  display: block;
 }
 
-.prose p {
-  max-width: 38rem;
-  margin: 0 0 1.4rem;
-  font-size: var(--text-lede);
-  font-weight: 300;
-  line-height: 1.8;
-  color: var(--ink-dim);
+/* ── Display line inner (the sliding element inside .hero-clip) ───────────── */
+/*
+ * Default state: translateY(0) — visible. GSAP fromTo sets translateY(100%)
+ * as the start each run. ctx.revert() restores to this CSS default (visible).
+ */
+.hero-display-line-inner {
+  display: block;
+  line-height: var(--display-lh);
 }
 
-.prose p:last-of-type {
+/*
+ * Line 2 variant: flex row so the portrait sits inline.
+ * align-items:center keeps parens and image on the same axis.
+ * gap is kept small — the parens are already part of the display type rhythm.
+ */
+.hero-display-line-inner--row {
+  display: flex;
+  align-items: center;
+  gap: 0.12em;
+}
+
+/* ── Parenthesis glyphs flanking the portrait ─────────────────────────────── */
+/*
+ * Same font / weight / size as the headline (inherited from .hero-display).
+ * user-select:none so double-click on the headline doesn't grab parens alone.
+ */
+.hero-paren {
+  display: inline-block;
+  user-select: none;
+  line-height: var(--display-lh);
+}
+
+/* ── Portrait image ──────────────────────────────────────────────────────────*/
+/*
+ * height: 0.78em = cap height of the display font (matching --display-lh).
+ * Using em so it scales in lock-step with the display font-size (--display).
+ * aspect-ratio: 3/4 so width is derived automatically.
+ * object-fit: cover fills the box without distortion.
+ *
+ * opacity: 1 is the CSS default (FINAL visible state).
+ * GSAP drives the entrance from opacity: 0.01 → 1 each run via fromTo.
+ * No inline opacity on the element — avoids the Nav bug where a hard-coded
+ * 0.01 left the image permanently near-invisible after ctx.revert().
+ */
+.hero-portrait-img {
+  height: 0.78em;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+  /* Subtle top-crop to show the face: object-position centres on the upper half */
+  object-position: center 20%;
+}
+
+/* ── 1px hairline rule ────────────────────────────────────────────────────── */
+/*
+ * rgba(25,25,25,0.2) — the ONE allowed exception to the two-colour rule
+ * per the design spec. It is a hairline separator, not a brand colour.
+ * Width matches the headline block (100% of parent).
+ * transform-origin set to left in GSAP for the scaleX reveal.
+ * No CSS transform set here — browser default (scale 1) is the visible state.
+ */
+.hero-rule {
+  width: 100%;
+  height: 1px;
+  background: rgba(25, 25, 25, 0.2);
+  margin-top: 0.6em;
+  /* GSAP sets scaleX(0)→scaleX(1); no CSS transform default = already visible */
+}
+
+/* ── Scroll indicator ────────────────────────────────────────────────────────*/
+/*
+ * "( scroll )" — Kumbh Sans, uppercase, 0.7rem, centred.
+ * Sits in the second grid row (auto), close to the bottom.
+ * opacity pulse uses a CSS keyframe loop (~2.4s ease-in-out).
+ * GSAP only handles the initial fade-in; after that the animation loops.
+ * No bounce — ease-in-out is smooth, no overshoot.
+ */
+.hero-scroll-indicator {
+  margin: 0;
+  text-align: center;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  padding-bottom: 0.5rem;
+  /* CSS animation — opacity oscillates after GSAP fade-in completes */
+  animation: hero-scroll-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── Mobile: <=640px ─────────────────────────────────────────────────────── */
+/*
+ * On narrow viewports the portrait becomes very small (em-scaled).
+ * No layout changes needed — the flex row collapses naturally.
+ * Reduce the upward bias so content doesn't crowd the nav.
+ */
+@media (max-width: 640px) {
+  .hero-headline-block {
+    margin-bottom: 4vh;
+  }
+
+  .hero-content {
+    padding-top: 4rem;
+  }
+
+  /*
+   * On narrow screens the widest line — "( ◉ ) MODELS" (parens + inline
+   * portrait + word) — overflows at the 12vw display size and gets clipped by
+   * the hero's overflow:hidden. Cap to a width-proportional size so the whole
+   * line always fits the column. Still height-bounded by 20svh.
+   */
+  .hero-display {
+    font-size: min(13vw, 20svh);
+  }
+}
+
+/* ===== END HERO ============================================================ */
+
+/* ===== SECTIONS (phase 3d) ================================================ */
+
+/*
+ * Shared section base:
+ *   - min-height: 100svh per spec (Footer is exempt — it's a closing strip).
+ *   - scroll-margin-top: 5rem so fixed nav doesn't eat the anchor target.
+ *   - bone bg, ink text throughout.
+ *   - padding: var(--gutter) on all sides; extra vertical padding via
+ *     padding-top/bottom overrides for breathing room.
+ */
+.sec {
+  min-height: 100svh;
+  background: var(--bone);
+  color: var(--ink);
+  padding: clamp(4rem, 10vh, 7rem) var(--gutter);
+  scroll-margin-top: 5rem;
+
+  /* Stack layout by default (mobile-first) */
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+/* ── Ordinal ( 0N ) ────────────────────────────────────────────────────────── */
+/*
+ * Kumbh Sans 700, uppercase, 0.75rem, letter-spacing 0.2em.
+ * Displayed as a block above the section headline.
+ */
+.sec-ordinal {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+/* ── Section display headline ────────────────────────────────────────────── */
+/*
+ * Kumbh Sans 700, uppercase, large clamp size.
+ * line-height and letter-spacing from the display tokens.
+ */
+.sec-display {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  line-height: var(--display-lh);
+  letter-spacing: var(--display-ls);
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Centred variant (Mental Models) */
+.sec-display--center {
+  text-align: center;
+}
+
+/* ── Two-column split sections (About, AiWorkflows) ─────────────────────── */
+@media (min-width: 768px) {
+  .sec--split {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: clamp(2rem, 5vw, 5rem);
+  }
+
+  .sec--split .sec-left {
+    flex: 0 0 55%;
+    max-width: 55%;
+  }
+
+  .sec--split .sec-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-top: 1rem; /* optical alignment with headline */
+  }
+}
+
+/* ── Centred section (Mental Models) ─────────────────────────────────────── */
+.sec--center {
+  align-items: center;
+}
+
+/* ── Serif bio (About + AiWorkflows left column) ─────────────────────────── */
+/*
+ * Bodoni Moda italic, ~1.15rem, line-height 1.5.
+ * Used for the three About paragraphs and the two AI paragraphs.
+ * max-width ~32rem keeps the measure readable.
+ */
+.sec-bio {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 32rem;
+}
+
+.sec-bio p {
+  margin: 0 0 1.25em;
+}
+.sec-bio p:last-child {
   margin-bottom: 0;
 }
 
-/* ------------------------------------------------------------------ pills */
-
-.pill-row {
+/* ── Portrait frame: ( img ) ─────────────────────────────────────────────── */
+/*
+ * Paren glyphs flanking the image — same ( ) treatment as Hero and Nav overlay.
+ * Font-size of the parens scales with the image width so they feel proportional.
+ */
+.sec-portrait-frame {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 2rem;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.pill {
-  padding: 0.45rem 1.05rem;
-  font-family: var(--font-label);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  color: var(--ink-dim);
-  background: var(--glass);
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  transition:
-    transform 0.3s var(--ease-snap),
-    border-color 0.3s ease,
-    color 0.3s ease;
+.sec-paren {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 4rem);
+  color: var(--ink);
+  line-height: 1;
+  user-select: none;
 }
 
-.pill:hover {
-  transform: translateY(-3px);
-  border-color: rgba(109, 123, 255, 0.55);
-  color: var(--accent-2);
+/* About portrait */
+.sec-portrait-img {
+  width: min(35vw, 22rem);
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
 }
 
-/* --------------------------------------------------------------- projects */
-
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.4rem;
+/* ── Portrait hover (phase 3g) — subtle 1 → 1.02 lift, media easing ──────────
+   Applied to the framed section/nav portraits. The scale is small enough to
+   sit within the gap to the ( ) glyphs, so it never collides with them. */
+.sec-portrait-img,
+.proj-portrait-img,
+.nav-portrait-img {
+  transition: transform 0.8s var(--ease-media);
+}
+.sec-portrait-img:hover,
+.proj-portrait-img:hover,
+.nav-portrait-img:hover {
+  transform: scale(1.02);
 }
 
-.project-grid > .reveal {
-  display: flex;
-}
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* PROJECTS                                                                    */
+/* ─────────────────────────────────────────────────────────────────────────── */
 
-.project-grid .tilt {
-  width: 100%;
-}
-
-.project-card,
-.card {
-  position: relative;
+/* Full-width project row */
+.proj-row {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
-  height: 100%;
-  padding: clamp(1.6rem, 3vw, 2.2rem);
-  text-align: left;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.8);
+  gap: 2rem;
+  padding: clamp(2rem, 5vw, 4rem) 0;
+  border-top: 1px solid rgba(25, 25, 25, 0.2);
 }
 
-.project-card {
-  cursor: pointer;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+/* Portrait frame: flex so the ( ) glyphs flank the image horizontally —
+   consistent with the About and Nav frames (was block, which stacked the
+   parens above/below the full-width image). */
+.proj-portrait-frame {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
-/* Cursor-following glow, position fed by TiltCard via --mx/--my */
-.project-card::before {
+@media (min-width: 768px) {
+  .proj-row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: clamp(2rem, 5vw, 5rem);
+  }
+
+  /* LEFT ~40%: portrait frame */
+  .proj-portrait-frame {
+    flex: 0 0 40%;
+    max-width: 40%;
+  }
+
+  /* RIGHT: project info */
+  .proj-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+  }
+}
+
+/* Project portrait: reuses sec-paren, but slightly smaller font-size for parens */
+.sec-paren--proj {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+}
+
+.proj-portrait-img {
+  flex: 1;          /* fill the space between the ( ) glyphs */
+  min-width: 0;     /* allow shrink inside the flex frame */
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  object-position: center 20%;
+}
+
+/* Tag: Kumbh uppercase, 0.7rem, ls 0.2em, faint ink */
+.proj-tag {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(25, 25, 25, 0.45);
+}
+
+/* Title: Bodoni serif, display-ish size */
+.proj-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* Summary: Bodoni italic, body size */
+.proj-summary {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+  max-width: 36rem;
+}
+
+/*
+ * CTA button — underline-redraw on hover:
+ *   ::after draws left→right (scaleX 0→1) on hover using --ease-link.
+ *   The → nudges right 8px on hover via transform on .proj-cta-arrow.
+ */
+.proj-cta {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  padding: 0;
+  position: relative;
+  margin-top: 0.5rem;
+  /* cursor: pointer inherited from index.css a/button rule */
+}
+
+/* Underline pseudo-element: draws from left to right */
+.proj-cta::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    420px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(109, 123, 255, 0.16),
-    transparent 65%
-  );
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-
-.project-card:hover,
-.project-card:focus-visible {
-  border-color: rgba(109, 123, 255, 0.45);
-  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.8),
-    0 0 50px -18px rgba(109, 123, 255, 0.35);
-}
-
-.project-card:hover::before {
-  opacity: 1;
-}
-
-.project-card-icon {
-  width: 64px;
-  height: 64px;
-  color: var(--accent);
-}
-
-.project-card-icon svg {
+  bottom: -2px;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease-link);
+}
+.proj-cta:hover::after {
+  transform: scaleX(1);
 }
 
-.project-card-tag,
-.card-tag {
-  font-family: var(--font-label);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent);
+/* Arrow nudges right 8px on hover */
+.proj-cta-arrow {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-tx);
+}
+.proj-cta:hover .proj-cta-arrow {
+  transform: translateX(8px);
 }
 
-.project-card-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h3);
+/* "More coming" dashed placeholder row */
+.proj-placeholder-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  border-top: 1px dashed rgba(25, 25, 25, 0.2);
+}
+
+.proj-placeholder-paren {
+  font-family: var(--sans);
   font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  font-size: 0.85rem;
+  color: rgba(25, 25, 25, 0.45);
+}
+
+.proj-placeholder-label {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: rgba(25, 25, 25, 0.45);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* WRITING                                                                     */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+.writing-list {
+  display: flex;
+  flex-direction: column;
+  /* No gap — borders on rows create the visual separation */
+}
+
+/*
+ * Each row: three-column grid (date | title | meta).
+ * Top border on every row; the last row also gets a bottom border.
+ * opacity: 0.5 for forthcoming placeholders.
+ * Hover: shift right 8px + underline-redraw on title.
+ */
+.writing-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid rgba(25, 25, 25, 0.2);
+  opacity: 0.5;
+  transition: transform 0.35s var(--ease-tx);
+}
+
+.writing-row:last-child {
+  border-bottom: 1px solid rgba(25, 25, 25, 0.2);
+}
+
+.writing-row:hover {
+  transform: translateX(8px);
+}
+
+/* Underline on the title on row hover */
+.writing-row:hover .writing-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Date column: "( Soon )" — sans, faint */
+.writing-date {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: rgba(25, 25, 25, 0.45);
+  white-space: nowrap;
+}
+
+/* Title column: Kumbh 600, ~1.3rem */
+.writing-title {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+/* Meta column: category tag, uppercase faint */
+.writing-meta {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(25, 25, 25, 0.45);
+  white-space: nowrap;
+}
+
+/* Mobile writing rows collapse to a stacked layout */
+@media (max-width: 640px) {
+  .writing-row {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* AI & TOOLS                                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+/*
+ * Right column: pill labels rendered as ( Label ) text items, stacked.
+ * Kumbh uppercase ~1rem, ls 0.1em, ink. No pill backgrounds.
+ */
+.ai-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.ai-pill {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   color: var(--ink);
 }
 
-.project-card-summary {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--ink-dim);
-}
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* MENTAL MODELS                                                               */
+/* ─────────────────────────────────────────────────────────────────────────── */
 
-.project-card-cta {
-  margin-top: auto;
-  padding-top: 0.5rem;
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.project-card-cta span {
-  display: inline-block;
-  transition: transform 0.3s var(--ease-snap);
-}
-
-.project-card:hover .project-card-cta span {
-  transform: translateX(6px);
-}
-
-.card--placeholder {
-  border-style: dashed;
-  border-color: var(--line-strong);
-  background: transparent;
-}
-
-.card--placeholder h3 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h3);
-  font-weight: 700;
-  color: var(--ink-faint);
-}
-
-.card--placeholder p {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 300;
-  line-height: 1.7;
-  color: var(--ink-faint);
-}
-
-.card--placeholder .card-tag {
-  color: var(--ink-faint);
-}
-
-/* ---------------------------------------------------------------- writing */
-
-.writing-list {
-  list-style: none;
+/*
+ * Large centered Bodoni Moda italic statements.
+ * Stacked with generous vertical spacing.
+ * No attribution (none in data — not invented).
+ */
+.mm-quote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  line-height: 1.3;
+  max-width: 50rem;
+  text-align: center;
+  color: var(--ink);
   margin: 0;
   padding: 0;
 }
 
-.writing-list li {
-  display: grid;
-  grid-template-columns: 6rem 1fr auto;
-  align-items: baseline;
-  gap: 1.5rem;
-  padding: 1.5rem 0.9rem;
-  border-top: 1px solid var(--line);
-  transition:
-    background-color 0.35s ease,
-    padding-left 0.35s var(--ease-out),
-    opacity var(--dur) var(--ease-out),
-    transform var(--dur) var(--ease-out),
-    filter var(--dur) var(--ease-out);
-}
-
-.writing-list li:last-child {
-  border-bottom: 1px solid var(--line);
-}
-
-.writing-list li:hover {
-  background: var(--glass);
-  padding-left: 1.5rem;
-}
-
-.writing-date,
-.writing-meta {
-  font-family: var(--font-label);
-  font-size: 0.76rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.writing-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  color: var(--ink-dim);
-  transition: color 0.35s ease;
-}
-
-.writing-list li:hover .writing-title {
-  color: var(--ink);
-}
-
-/* ----------------------------------------------------------------- quotes */
-
-.quote-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.4rem;
-  margin-top: clamp(2.5rem, 6vh, 4rem);
-  text-align: left;
-}
-
-.quote {
-  position: relative;
+.mm-quote p {
   margin: 0;
-  padding: 2.4rem 2rem 2rem;
-  background: var(--glass);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
 }
 
-.quote.reveal {
-  transition:
-    transform 0.4s var(--ease-out),
-    border-color 0.4s ease,
-    opacity var(--dur) var(--ease-out),
-    filter var(--dur) var(--ease-out);
-}
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* FOOTER                                                                      */
+/* ─────────────────────────────────────────────────────────────────────────── */
 
-.quote:hover {
-  transform: translateY(-6px);
-  border-color: rgba(109, 123, 255, 0.45);
-}
-
-.quote::before {
-  content: '“';
-  position: absolute;
-  top: 0.4rem;
-  left: 1.4rem;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 3.4rem;
-  line-height: 1;
-  background: linear-gradient(120deg, var(--accent-2), var(--accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  opacity: 0.85;
-}
-
-.quote p {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.18rem;
-  font-weight: 500;
-  line-height: 1.6;
+/*
+ * Closing strip — NOT full-screen (no min-height: 100svh).
+ * Top border: 1px ink-20%.
+ * Two-column inner: wordmark left, tagline/copy/links right.
+ */
+.site-footer {
+  background: var(--bone);
   color: var(--ink);
-}
-
-/* ----------------------------------------------------------------- footer */
-
-.footer {
-  border-top: 1px solid var(--line);
-  background:
-    radial-gradient(70% 110% at 50% 130%, rgba(109, 123, 255, 0.08), transparent 70%),
-    var(--bg);
-  padding: clamp(3.5rem, 9vh, 6rem) var(--gutter) 2.5rem;
+  border-top: 1px solid rgba(25, 25, 25, 0.2);
+  padding: clamp(4rem, 10vh, 7rem) var(--gutter);
 }
 
 .footer-inner {
-  max-width: var(--container);
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2.5rem;
 }
 
-.footer-tag {
-  margin: 0;
-  font-size: var(--text-lede);
-  font-weight: 300;
-  line-height: 1.8;
-  color: var(--ink-dim);
+@media (min-width: 640px) {
+  .footer-inner {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 3rem;
+  }
 }
 
-.footer-tag em {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.12em;
-  background: var(--grad-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Wordmark: "aum." — Kumbh 700, ~1.1rem */
+.footer-wordmark {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  flex-shrink: 0;
 }
 
-.footer-meta {
+/* Right group: tagline + copy + links */
+.footer-right {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1rem;
-  padding-top: 1.6rem;
-  border-top: 1px solid var(--line);
+  text-align: left;
 }
 
-.footer-copy {
+@media (min-width: 640px) {
+  .footer-right {
+    text-align: right;
+    align-items: flex-end;
+  }
+}
+
+/* Footer tagline: Bodoni italic */
+.footer-tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink);
   margin: 0;
-  font-family: var(--font-label);
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
 }
 
+.footer-tagline em {
+  font-style: italic; /* already italic — reinforces the block */
+}
+
+/* Copyright line */
+.footer-copy {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: rgba(25, 25, 25, 0.45);
+  margin: 0;
+}
+
+/* Social link nav */
 .footer-links {
   display: flex;
-  gap: 1.8rem;
+  gap: 1.5rem;
 }
 
-.footer-links a {
+/*
+ * Footer social links — underline-redraw hover (same pattern as Nav contact links).
+ * Kumbh Sans 700 uppercase 0.8rem ls 0.18em.
+ * ::after scaleX(0→1), transform-origin left, --ease-link.
+ */
+.footer-link {
   position: relative;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--ink-dim);
+  display: inline-block;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink);
   text-decoration: none;
-  transition: color 0.3s ease;
 }
 
-.footer-links a::after {
+.footer-link::after {
   content: '';
   position: absolute;
+  bottom: -2px;
   left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 1.5px;
-  background: var(--grad-accent);
+  width: 100%;
+  height: 1px;
+  background: var(--ink);
   transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.35s var(--ease-out);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease-link);
 }
 
-.footer-links a:hover,
-.footer-links a:focus-visible {
-  color: var(--ink);
+.footer-link:hover::after {
+  transform: scaleX(1); /* underline draws left to right */
 }
 
-.footer-links a:hover::after,
-.footer-links a:focus-visible::after {
-  transform: scaleX(1);
+/* ===== PROJECT MODAL (phase 3e) ============================================ */
+
+/*
+ * Entrance animations
+ * Desktop: panel slides in from the right edge.
+ * Mobile:  panel slides up from the bottom.
+ * animation-fill-mode: both guarantees the end state is held after the
+ * animation completes (no need for a JS mounted-state toggle).
+ */
+@keyframes modal-slide-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
 }
 
-/* ------------------------------------------------------------------ modal */
+@keyframes modal-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
 
+/* ── Backdrop ────────────────────────────────────────────────────────────── */
+/*
+ * Near-opaque bone wash that covers the full viewport.
+ * Clicking the backdrop calls onClose; clicking the panel does NOT (stopProp).
+ * backdrop-filter blur(4px) softens the page content beneath.
+ * Fades in over 0.3 s on mount.
+ */
 .project-modal {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  display: flex;
-  padding: clamp(0.75rem, 3vw, 2.5rem);
-  background: rgba(0, 0, 0, 0.72);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  animation: modalFade 0.35s ease both;
+  z-index: 1000;
+  background: rgba(239, 237, 234, 0.95);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: modal-fade-in 0.3s var(--ease-tx) both;
 }
 
-@keyframes modalFade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
+/* ── Panel (drawer) — desktop: right-aligned ────────────────────────────── */
+/*
+ * Bone background, no border, no radius, no glass.
+ * Takes 65 vw on desktop (min-width > 768 px), pinned right, full height.
+ * Slides in from the right over 0.65 s with --ease-tx.
+ * Internal scroll is on this element; overscroll-behavior: contain keeps
+ * the scroll trapped inside the drawer.
+ */
 .project-modal-panel {
-  position: relative;
-  width: min(54rem, 100%);
-  margin: auto;
-  max-height: calc(100vh - clamp(1.5rem, 6vw, 5rem));
-  max-height: calc(100svh - clamp(1.5rem, 6vw, 5rem));
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(65vw, 60rem);
+  background: var(--bone);
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: rgba(20, 22, 28, 0.97);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 60px 120px -40px rgba(0, 0, 0, 0.8);
-  animation: modalRise 0.55s var(--ease-out) both;
+  display: flex;
+  flex-direction: column;
+  animation: modal-slide-right 0.65s var(--ease-tx) both;
 }
 
-@keyframes modalRise {
-  from {
-    opacity: 0;
-    transform: translateY(36px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+/* ── Panel — mobile: full-width, slides up ──────────────────────────────── */
+@media (max-width: 768px) {
+  .project-modal-panel {
+    top: auto;
+    left: 0;
+    width: 100%;
+    height: 92svh; /* small reveal of backdrop above lets user see to tap-close */
+    animation: modal-slide-up 0.65s var(--ease-tx) both;
   }
 }
 
+/* ── Reduced motion: skip all animation ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .project-modal,
+  .project-modal-panel {
+    animation: none;
+  }
+}
+
+/* ── Actions bar (sticky top of panel) ──────────────────────────────────── */
+/*
+ * Bone background so the bar sits cleanly above scrolling article content.
+ * Flex row: copy-link left, close (×) right.
+ * Bottom hairline separates it from the article.
+ */
 .project-modal-actions {
   position: sticky;
   top: 0;
-  z-index: 3;
+  z-index: 10;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.9rem 1rem;
-  background: linear-gradient(to bottom, rgba(20, 22, 28, 0.98) 55%, transparent);
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--bone);
+  border-bottom: 1px solid rgba(25, 25, 25, 0.2);
+  flex-shrink: 0;
 }
 
-.project-modal-share {
-  padding: 0.5rem 1.1rem;
-  font-family: var(--font-label);
-  font-size: 0.76rem;
-  letter-spacing: 0.1em;
-  color: var(--ink-dim);
-  background: var(--glass-strong);
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
-}
-
-.project-modal-share:hover {
-  color: var(--accent-2);
-  border-color: rgba(109, 123, 255, 0.55);
-}
-
-.project-modal-share--copied {
-  color: var(--bg);
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
+/* ── Close button — bare × glyph ───────────────────────────────────────── */
+/*
+ * No background, no border, no circle. Kumbh Sans 700 ~1.5 rem ink.
+ * Hover: gentle opacity drop; no bounce/elastic.
+ */
 .project-modal-close {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1.5rem;
   line-height: 1;
-  color: var(--ink-dim);
-  background: var(--glass-strong);
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  cursor: pointer;
-  transition:
-    color 0.3s ease,
-    border-color 0.3s ease,
-    transform 0.4s var(--ease-snap);
+  transition: opacity 0.2s var(--ease-tx);
 }
 
 .project-modal-close:hover {
-  color: var(--accent-2);
-  border-color: rgba(109, 123, 255, 0.55);
-  transform: rotate(90deg);
+  opacity: 0.45;
 }
 
-/* ---------------------------------------------------------------- article */
-
-.article {
-  padding: 0 clamp(1.4rem, 5vw, 4rem) clamp(2.5rem, 6vw, 4rem);
-}
-
-.article-head {
-  padding: 1rem 0 2.4rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.article-eyebrow {
-  font-family: var(--font-label);
-  font-size: var(--text-label);
-  font-weight: 500;
-  letter-spacing: 0.26em;
+/* ── Copy-link button — text-only, underline-redraw hover ──────────────── */
+/*
+ * Kumbh Sans uppercase ~0.7 rem, letter-spacing 0.15 em, ink.
+ * Underline drawn by ::after scaleX(0→1) on hover using --ease-link.
+ * Text toggles between "Copy link" and "Link copied" (controlled by React).
+ */
+.project-modal-share {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  color: var(--accent);
+  letter-spacing: 0.15em;
 }
 
-.article-title {
-  margin: 1.1rem 0 1rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4.2vw, 2.7rem);
-  font-weight: 800;
-  line-height: 1.04;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
+.project-modal-share::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease-link);
+}
+
+.project-modal-share:hover::after,
+.project-modal-share--copied::after {
+  transform: scaleX(1);
+}
+
+/* ── Article body container ─────────────────────────────────────────────── */
+.project-modal-body {
+  flex: 1;
+  padding: 3rem 2rem 5rem;
+}
+
+@media (min-width: 768px) {
+  .project-modal-body {
+    padding: 3.5rem 3rem 6rem;
+  }
+}
+
+/* ===== ARTICLE (phase 3e) ================================================== */
+
+/*
+ * SocraticArticle — bone/ink editorial styles.
+ * Max reading width ~42 rem centered within the panel.
+ * DO NOT touch SocraticArticle.jsx markup — only class-level CSS here.
+ */
+
+/* ── Outer article wrapper ──────────────────────────────────────────────── */
+.article {
+  max-width: 42rem;
+  margin: 0 auto;
   color: var(--ink);
 }
 
+/* ── Header block ───────────────────────────────────────────────────────── */
+.article-head {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(25, 25, 25, 0.2);
+}
+
+/* Eyebrow: "Project · Build notes" — all-caps label above the title */
+.article-eyebrow {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(25, 25, 25, 0.5);
+  margin-bottom: 1rem;
+}
+
+/* Title: Kumbh 700 large, ink. The <em> child gets Bodoni italic accent. */
+.article-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 1.1rem;
+}
+
+/* The <em> inside the title: Bodoni Moda italic accent (NOT a gradient) */
 .article-title em {
-  font-family: inherit;
-  font-style: normal;
-  background: linear-gradient(120deg, var(--accent-2), var(--accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
 }
 
+/* Deck: Bodoni italic intro line */
 .article-deck {
-  max-width: 40rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--ink);
   margin: 0;
-  font-size: var(--text-lede);
-  font-weight: 300;
-  line-height: 1.75;
-  color: var(--ink-dim);
 }
 
+/* ── Lead section ───────────────────────────────────────────────────────── */
 .article-lead {
-  padding: 2.2rem 0 0.4rem;
+  margin-bottom: 2.5rem;
 }
 
 .article-lead p {
-  max-width: 42rem;
-  margin: 0 0 1.3rem;
-  font-size: clamp(1.05rem, 1.6vw, 1.18rem);
-  font-weight: 300;
-  line-height: 1.8;
+  font-size: 1.1rem;
+  line-height: 1.7;
   color: var(--ink);
+  margin: 0 0 1.1em;
+}
+
+.article-lead p:last-child {
+  margin-bottom: 0;
 }
 
 .article-lead strong {
   font-weight: 600;
+  color: var(--ink);
 }
 
+/* ── Body sections ──────────────────────────────────────────────────────── */
 .article-section {
-  padding-top: 2.4rem;
+  margin-bottom: 2.5rem;
 }
 
+/* Section h2: Kumbh 700 ~1.4 rem, ink */
 .article-section h2 {
-  margin: 0 0 1.1rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+  font-family: var(--sans);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 0.9rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(25, 25, 25, 0.2);
 }
 
+/* Section h3: Kumbh 600 ~1.05 rem, ink */
 .article-section h3 {
-  margin: 1.8rem 0 0.8rem;
-  font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-family: var(--sans);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+  line-height: 1.3;
+  color: var(--ink);
+  margin: 1.5rem 0 0.6rem;
 }
 
+/* Body paragraphs: line-height 1.7, slightly softened ink */
 .article-section p {
-  max-width: 42rem;
-  margin: 0 0 1.2rem;
-  font-weight: 300;
-  line-height: 1.8;
-  color: var(--ink-dim);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(25, 25, 25, 0.85);
+  margin: 0 0 1em;
+}
+
+.article-section p:last-child {
+  margin-bottom: 0;
 }
 
 .article-section strong {
@@ -1468,287 +1458,192 @@
   color: var(--ink);
 }
 
+/* ── Lists ───────────────────────────────────────────────────────────────── */
 .article-list {
-  max-width: 42rem;
-  margin: 0 0 1.2rem;
-  padding-left: 1.2rem;
-  display: grid;
-  gap: 0.7rem;
+  margin: 0.8rem 0 1rem 1.4rem;
+  padding: 0;
+  color: rgba(25, 25, 25, 0.85);
+  line-height: 1.7;
 }
 
 .article-list li {
-  font-weight: 300;
-  line-height: 1.75;
-  color: var(--ink-dim);
+  margin-bottom: 0.55em;
 }
 
 .article-list li::marker {
-  color: var(--accent);
+  color: var(--ink);
+}
+
+/* Ordered variant: Kumbh for the number markers */
+.article-list--ordered {
+  list-style-type: decimal;
+  font-family: var(--sans);
 }
 
 .article-list--ordered li::marker {
-  font-family: var(--font-label);
-  font-size: 0.85em;
-  color: var(--accent);
+  font-family: var(--sans);
+  font-weight: 700;
+  color: var(--ink);
 }
 
+/* ── Code blocks — INVERTED (ink bg / bone text) ────────────────────────── */
+/*
+ * On-system inversion: ink background, bone-coloured text.
+ * Monospace stack with Kumbh as fallback (monospace only needed here).
+ */
 .article-pre {
-  max-width: 42rem;
-  margin: 0 0 1.2rem;
-  padding: 1.2rem 1.4rem;
-  font-family: var(--font-mono);
-  font-size: 0.84rem;
-  line-height: 1.7;
-  color: #c9d0e8;
-  background: #0b0d12;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--bone);
+  font-family: ui-monospace, Menlo, 'Cascadia Code', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
   overflow-x: auto;
+  border-radius: 2px; /* minimal radius — barely there */
 }
 
+/* Inline code: subtle ink-tint background, ink text */
 .article code {
-  padding: 0.1em 0.45em;
-  font-family: var(--font-mono);
-  font-size: 0.86em;
-  color: var(--accent-2);
-  background: rgba(109, 123, 255, 0.1);
-  border: 1px solid rgba(109, 123, 255, 0.25);
-  border-radius: 6px;
+  font-family: ui-monospace, Menlo, 'Cascadia Code', monospace;
+  font-size: 0.88em;
+  background: rgba(25, 25, 25, 0.06);
+  color: var(--ink);
+  padding: 0.15em 0.35em;
+  border-radius: 2px;
 }
 
-/* Principle asides: glass cards with a gradient spine */
+/* Ensure code inside pre keeps the bone colour */
+.article-pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+  border-radius: 0;
+}
+
+/* ── Principle asides — left-spine card ─────────────────────────────────── */
+/*
+ * Aside cards with an ink left-border spine. No glass, no rounded box.
+ * .principle-label: all-caps tag (label)
+ * .principle p:    Bodoni italic quote (~1.1 rem)
+ * .principle--meta: full ink left bar + faint ink-tint bg for the meta-lesson
+ */
 .principle {
-  position: relative;
-  max-width: 42rem;
-  margin: 1.8rem 0 0.6rem;
-  padding: 1.4rem 1.6rem;
-  background: var(--glass);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
+  border-left: 2px solid var(--ink);
+  padding: 0.85rem 1.25rem;
+  margin: 1.5rem 0;
 }
 
-.principle::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+.principle--meta {
+  background: rgba(25, 25, 25, 0.04);
+  border-left-width: 3px; /* slightly bolder spine for the capstone aside */
 }
 
 .principle-label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-family: var(--font-label);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.24em;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  color: var(--accent);
+  letter-spacing: 0.22em;
+  color: rgba(25, 25, 25, 0.5);
+  margin-bottom: 0.5rem;
 }
 
 .principle p {
-  max-width: none;
-  margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--serif);
   font-style: italic;
-  font-size: 1.12rem;
-  font-weight: 500;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  line-height: 1.55;
   color: var(--ink);
+  margin: 0;
 }
 
-.principle--meta {
-  background: var(--grad-faint);
-  border-color: rgba(109, 123, 255, 0.3);
-}
-
-/* Ops table */
+/* ── Table ───────────────────────────────────────────────────────────────── */
+/* Horizontally scrollable wrapper — ensures table never overflows on mobile */
 .table-wrap {
-  max-width: 42rem;
-  margin: 0 0 1.2rem;
   overflow-x: auto;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  margin: 1.25rem 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ops-table {
   width: 100%;
-  min-width: 34rem;
   border-collapse: collapse;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
+/* Header row: Kumbh uppercase label style on faint ink-tint bg */
 .ops-table th {
-  padding: 0.85rem 1.1rem;
-  font-family: var(--font-label);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  text-align: left;
-  color: var(--accent);
-  background: rgba(109, 123, 255, 0.07);
-  border-bottom: 1px solid var(--line-strong);
-}
-
-.ops-table td {
-  padding: 0.85rem 1.1rem;
-  font-weight: 300;
-  line-height: 1.6;
-  color: var(--ink-dim);
-  border-bottom: 1px solid var(--line);
-  vertical-align: top;
-}
-
-.ops-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.ops-table td:first-child {
-  font-family: var(--font-body);
-  font-weight: 600;
+  letter-spacing: 0.15em;
   color: var(--ink);
+  background: rgba(25, 25, 25, 0.05);
+  border: 1px solid rgba(25, 25, 25, 0.2);
+  padding: 0.6rem 0.85rem;
+  text-align: left;
   white-space: nowrap;
 }
 
-.ops-table tbody tr {
-  transition: background-color 0.25s ease;
+/* Data cells: ink hairline borders */
+.ops-table td {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--ink);
+  border: 1px solid rgba(25, 25, 25, 0.2);
+  padding: 0.55rem 0.85rem;
+  line-height: 1.5;
 }
 
-.ops-table tbody tr:hover {
-  background: var(--glass);
+/* First column of data rows: slightly bolder weight */
+.ops-table td:first-child {
+  font-weight: 600;
 }
 
+/* Row hover: faint ink-tint wash */
+.ops-table tbody tr:hover td {
+  background: rgba(25, 25, 25, 0.03);
+}
+
+/* ── Footer / footnote ───────────────────────────────────────────────────── */
+/*
+ * Top hairline border; Bodoni italic faint ink note.
+ */
 .article-footnote {
-  margin-top: 2.8rem;
-  padding-top: 1.6rem;
-  border-top: 1px solid var(--line);
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(25, 25, 25, 0.2);
 }
 
 .article-footnote p {
-  max-width: 42rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(25, 25, 25, 0.55);
   margin: 0;
-  font-size: 0.92rem;
-  font-weight: 300;
-  line-height: 1.75;
-  color: var(--ink-faint);
 }
 
 .article-footnote em {
-  color: var(--ink-dim);
+  font-style: italic; /* already italic — reinforces */
 }
 
-/* ------------------------------------------------------------- responsive */
-
-@media (max-width: 980px) {
-  .project-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .quote-grid {
-    grid-template-columns: 1fr;
-  }
+/* ── sr-only (screen-reader only) ─────────────────────────────────────────
+   Shared utility. If already defined elsewhere in App.css, this is harmless. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
-@media (max-width: 860px) {
-  .nav-toggle {
-    display: block;
-  }
-
-  /* Desktop links hide; the separate .nav-overlay takes over */
-  .nav-links {
-    display: none;
-  }
-
-  .nav-pill {
-    padding: 0.35rem 0.35rem 0.35rem 1.25rem;
-  }
-
-  .hero-inner {
-    padding-top: 7.5rem;
-    padding-bottom: 8.5rem;
-  }
-
-  .hero-scroll-hint {
-    display: none;
-  }
-
-  .section-inner--split {
-    grid-template-columns: 1fr;
-  }
-
-  .section-head--row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.4rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .project-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .writing-list li {
-    grid-template-columns: 1fr;
-    gap: 0.4rem;
-    padding: 1.3rem 0.6rem;
-  }
-
-  .writing-list li:hover {
-    padding-left: 0.6rem;
-  }
-
-  .footer-meta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* --------------------------------------------------------- reduced motion */
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-marquee-track {
-    animation: none;
-    width: auto;
-  }
-
-  .hero-marquee {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .hero-marquee-group:nth-child(2) {
-    display: none;
-  }
-
-  .hero-scroll-line {
-    animation: none;
-  }
-
-  .hero-char,
-  .eyebrow,
-  .hero-sub,
-  .hero-cta,
-  .reveal {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-  }
-
-  /* Decorative cursor light and spotlight overlay never appear */
-  .cursor-glow,
-  .portrait-overlay {
-    display: none !important;
-  }
-
-  /* No portal animation — navigation is instant for reduced-motion users */
-  .wormhole-canvas,
-  .wormhole-fade {
-    display: none !important;
-  }
-}
+/* ===== END SECTIONS (phase 3d) ============================================ */

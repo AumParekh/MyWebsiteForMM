@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__models_explore",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__generate_image",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__media_upload",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__media_confirm",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__job_status",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__job_display",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__media_import_url",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__show_plans_and_credits",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__show_generations",
+      "mcp__b9a06948-43ed-4992-87a6-a16f7d4add54__show_medias"
+    ]
+  }
+}
