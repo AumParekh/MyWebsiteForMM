@@ -51,8 +51,8 @@ export function About() {
             and cash flow models most people never see.
           </p>
           <p>
-            But I'm equally interested in the meta layer: how knowledge gets
-            built, how mental models spread across disciplines, and what
+            But I'm equally interested in the meta layer of how knowledge
+            gets built, how mental models spread across disciplines, and what
             happens when AI becomes a genuine thinking partner rather than
             just a search engine.
           </p>
@@ -181,13 +181,13 @@ export function AiWorkflows() {
         {/* Two AI paragraphs verbatim */}
         <Reveal delay={120} className="sec-bio">
           <p>
-            I use AI extensively: for research, for writing, for building
+            I use AI extensively, for research, for writing, for building
             tools, for thinking through hard problems out loud. This section
             is a running document of what's actually worked.
           </p>
           <p>
-            Not productivity advice. More like: here's a workflow, here's why
-            it exists, here's what it replaced.
+            Not productivity advice. More like a running note. Here's a
+            workflow, here's why it exists, here's what it replaced.
           </p>
         </Reveal>
       </div>
