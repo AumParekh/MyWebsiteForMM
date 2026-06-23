@@ -583,6 +583,16 @@
   .hero-content {
     padding-top: 4rem;
   }
+
+  /*
+   * On narrow screens the widest line — "( ◉ ) MODELS" (parens + inline
+   * portrait + word) — overflows at the 12vw display size and gets clipped by
+   * the hero's overflow:hidden. Cap to a width-proportional size so the whole
+   * line always fits the column. Still height-bounded by 20svh.
+   */
+  .hero-display {
+    font-size: min(13vw, 20svh);
+  }
 }
 
 /* ===== END HERO ============================================================ */
