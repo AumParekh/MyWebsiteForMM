@@ -75,7 +75,7 @@ export const PROJECTS = [
     tag: 'Live AI · Teaching instrument',
     title: 'What if an LLM and a presentation merged into one live teaching instrument?',
     summary:
-      'A dual-screen Socratic co-pilot that turns a static script into a real-time, branching, AI-driven session — the room sees one question, the operator sees the answer key and a row of steering buttons.',
+      'A dual-screen Socratic co-pilot that turns a static script into a real-time, branching, AI-driven session: the room sees one question, the operator sees the answer key and a row of steering buttons.',
     icon: <SocraticIcon />,
     cta: 'Read the build',
   },

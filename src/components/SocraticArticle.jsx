@@ -12,7 +12,7 @@ export default function SocraticArticle() {
         </h1>
         <p className="article-deck">
           How to turn a static teaching script into a real-time, AI-driven,
-          dual-screen Socratic instrument — and the design lessons learned
+          dual-screen Socratic instrument, with the design lessons learned
           along the way.
         </p>
       </header>
@@ -20,13 +20,13 @@ export default function SocraticArticle() {
       <section className="article-lead">
         <p>
           <strong>What if an LLM and a presentation could merge</strong> into a
-          single teaching instrument — a deck that asks instead of tells,
+          single teaching instrument: a deck that asks instead of tells,
           branches instead of plays linearly, and lets a presenter steer a
           live Socratic session in real time?
         </p>
         <p>
           This is the account of building that tool. The specific subject was
-          an actuarial topic — dynamic lapse modelling in annuities — but the
+          an actuarial topic (dynamic lapse modelling in annuities), but the
           pattern generalises to any guided teaching session. It is not a code
           manual; it is a record of the design decisions, the architecture
           that emerged, and the problems that only surfaced once the tool met
@@ -40,8 +40,8 @@ export default function SocraticArticle() {
           The goal was a presentation run by the Socratic method: instead of
           showing the audience answers, the presenter poses questions, the
           room reasons aloud, and the material is drawn out of them. A
-          language model drives the questioning live — judging answers,
-          branching, going deeper — while the presenter steers.
+          language model drives the questioning live (judging answers,
+          branching, going deeper) while the presenter steers.
         </p>
         <p>
           The naïve version is to share a chatbot window on a projector and
@@ -51,7 +51,7 @@ export default function SocraticArticle() {
         <ul className="article-list">
           <li>
             <strong>Spoilers.</strong> The raw model output, the presenter's
-            prompts, the answer keys — everything is visible to the room. A
+            prompts, the answer keys: everything is visible to the room. A
             Socratic session cannot show the answer before the question.
           </li>
           <li>
@@ -82,8 +82,8 @@ export default function SocraticArticle() {
         <ul className="article-list">
           <li>
             <strong>The stage</strong> (on the projector) shows only the
-            current concept, a scenario, and one question — typeset cleanly,
-            scannable from the back of a room.
+            current concept, a scenario, and one question, typeset cleanly
+            and scannable from the back of a room.
           </li>
           <li>
             <strong>The console</strong> (on the presenter's laptop) holds the
@@ -93,7 +93,7 @@ export default function SocraticArticle() {
         </ul>
         <p>
           Crucially, the model is given the entire teaching script as hidden
-          context — every question, answer, mental model, and formula. It
+          context: every question, answer, mental model, and formula. It
           always knows where each thread should land. But it is instructed to
           emit only the question to the stage; the answers live on the
           operator's side. The model becomes a Socratic engine that knows the
@@ -130,7 +130,7 @@ export default function SocraticArticle() {
       </section>
 
       <section className="article-section">
-        <h2>3. Pedagogical design — making it teach, not quiz</h2>
+        <h2>3. Pedagogical design: making it teach, not quiz</h2>
         <p>
           An early version simply read the script's questions in order. It
           felt like an interrogation. Three deliberate teaching behaviours
@@ -139,7 +139,7 @@ export default function SocraticArticle() {
         <ul className="article-list">
           <li>
             <strong>Priming before every question.</strong> Each question is
-            preceded by a one- or two-sentence setup — a "prime" — that
+            preceded by a one- or two-sentence setup (a "prime") that
             recalls what was just established and plants a concrete hook, so
             the question never lands cold.
           </li>
@@ -151,14 +151,14 @@ export default function SocraticArticle() {
           <li>
             <strong>Probing on success.</strong> When the room answers
             correctly, the model is told to reward them with a harder
-            follow-up that stress-tests the idea — not just to move on.
+            follow-up that stress-tests the idea, not just to move on.
           </li>
         </ul>
         <aside className="principle">
           <span className="principle-label">Third principle</span>
           <p>
-            The quality of a Socratic session lives in the connective tissue
-            — the priming and the bridges between ideas — far more than in
+            The quality of a Socratic session lives in the connective tissue:
+            the priming and the bridges between ideas, far more than in
             the questions themselves. Design for the transitions.
           </p>
         </aside>
@@ -189,7 +189,7 @@ export default function SocraticArticle() {
               <tr>
                 <td>Mark Wrong</td>
                 <td>"Not quite"</td>
-                <td>Don't correct or reveal — pose a simpler counter-question</td>
+                <td>Don't correct or reveal; pose a simpler counter-question</td>
               </tr>
               <tr>
                 <td>Go Deeper</td>
@@ -199,7 +199,7 @@ export default function SocraticArticle() {
               <tr>
                 <td>Move On</td>
                 <td>"Next concept"</td>
-                <td>Don't restate the answer — bridge to a brand-new question</td>
+                <td>Don't restate the answer; bridge to a brand-new question</td>
               </tr>
               <tr>
                 <td>Give Answer</td>
@@ -226,13 +226,13 @@ export default function SocraticArticle() {
       </section>
 
       <section className="article-section">
-        <h2>5. The hardest lesson — anchoring commands to state</h2>
+        <h2>5. The hardest lesson: anchoring commands to state</h2>
         <p>
           The single most instructive bug: commands like "go deeper" and "move
           on" misbehaved because the model did not know which question was
           currently on the screen. It was told "deepen this idea" but had to
-          guess which idea, and guessed wrong — drifting into the wrong
-          topic, or revealing an answer when it shouldn't.
+          guess which idea, and guessed wrong, drifting into the wrong
+          topic or revealing an answer when it shouldn't.
         </p>
         <p>
           The fix reshaped the whole approach: the application captures the
@@ -251,10 +251,10 @@ export default function SocraticArticle() {
       </section>
 
       <section className="article-section">
-        <h2>6. Defensive engineering — the safety net</h2>
+        <h2>6. Defensive engineering: the safety net</h2>
         <p>
           Models under live load skip rules. Telling the model "always
-          include a prime" was not enough — sometimes it didn't. So the
+          include a prime" was not enough; sometimes it didn't. So the
           application was given a self-correcting layer that inspects every
           reply before showing it:
         </p>
@@ -265,7 +265,7 @@ export default function SocraticArticle() {
             end on screen).
           </li>
           <li>
-            Is there a question with no prime? Re-ask for the prime — a cold
+            Is there a question with no prime? Re-ask for the prime; a cold
             question never reaches the room.
           </li>
           <li>
@@ -283,27 +283,27 @@ export default function SocraticArticle() {
           <p>
             Treat the model as unreliable and verify its output
             programmatically. The prompt sets intent; the app guarantees the
-            contract. Build the net <em>and</em> the prompt — neither alone is
+            contract. Build the net <em>and</em> the prompt; neither alone is
             enough.
           </p>
         </aside>
       </section>
 
       <section className="article-section">
-        <h2>7. Rendering — math and visuals on the fly</h2>
+        <h2>7. Rendering: math and visuals on the fly</h2>
         <p>For a technical subject, words aren't enough. Two capabilities were layered in:</p>
         <ul className="article-list">
           <li>
             <strong>Typeset mathematics.</strong> The model emits formulas in
             LaTeX; the stage renders them as proper equations. The lesson
             here: provide the formulas pre-written in LaTeX inside the
-            script, rather than asking the model to convert ASCII on the fly
-            — it does the conversion poorly or skips it.
+            script, rather than asking the model to convert ASCII on the fly;
+            it does the conversion poorly or skips it.
           </li>
           <li>
             <strong>Live charts.</strong> The model can emit a compact data
             specification and the app draws the curve or bars on a canvas.
-            This is genuinely dynamic — it can plot a relationship the
+            This is genuinely dynamic: it can plot a relationship the
             audience just predicted, or contrast two parameter choices on the
             spot.
           </li>
@@ -322,8 +322,8 @@ export default function SocraticArticle() {
       <section className="article-section">
         <h2>8. The source material matters more than the prompt</h2>
         <p>
-          A recurring failure — the model asking cold, context-free questions
-          — was eventually traced not to the prompt but to the script. The
+          A recurring failure (the model asking cold, context-free questions)
+          was eventually traced not to the prompt but to the script. The
           original script listed bare questions with no surrounding scenario,
           so the model had no raw material to build a setup from. The cure
           was to write a concrete, vivid scenario into the script before
@@ -351,8 +351,8 @@ export default function SocraticArticle() {
             <strong>Where the model runs.</strong> In-chat AI access only
             exists inside the host platform. A standalone file needs its own
             API key. The tool was rebuilt to call an external model API with
-            a key the presenter pastes locally — never stored, never
-            transmitted elsewhere.
+            a key the presenter pastes locally (never stored, never
+            transmitted elsewhere).
           </li>
           <li>
             <strong>Two real windows.</strong> The cleanest projector setup is
@@ -363,7 +363,7 @@ export default function SocraticArticle() {
           <li>
             <strong>Graceful failure.</strong> Network errors, popup
             blocking, and missing dependencies all need visible, recoverable
-            handling — a tool that dies silently in front of a room is worse
+            handling; a tool that dies silently in front of a room is worse
             than no tool.
           </li>
           <li>
@@ -429,7 +429,7 @@ export default function SocraticArticle() {
           <p>
             Almost every improvement came not from a cleverer prompt, but
             from moving responsibility out of the model and into the
-            application — capturing state, enforcing structure, verifying
+            application: capturing state, enforcing structure, verifying
             output, and pre-loading inputs. The model is the reasoning
             engine; the application is the discipline around it. A reliable
             live AI tool is mostly the discipline.

@@ -46,8 +46,8 @@ export function About() {
         {/* Serif bio — three paragraphs verbatim */}
         <Reveal delay={120} className="sec-bio">
           <p>
-            I'm Aum. I work in fixed income and insurance analytics — the
-            kind of work that lives in spreadsheets, actuarial assumptions,
+            I'm Aum. I work in fixed income and insurance analytics. It's
+            the kind of work that lives in spreadsheets, actuarial assumptions,
             and cash flow models most people never see.
           </p>
           <p>
@@ -60,7 +60,7 @@ export function About() {
             This site is where those two worlds meet. You'll find writeups on
             financial concepts I've had to really dig into, projects I've
             built, workflows that actually changed how I work, and honest
-            notes on using AI as a tool for thinking — not just a shortcut.
+            notes on using AI as a tool for thinking, not just a shortcut.
           </p>
         </Reveal>
       </div>
@@ -71,7 +71,7 @@ export function About() {
           <span className="sec-paren" aria-hidden="true">(</span>
           <img
             src={`${import.meta.env.BASE_URL}aum-nav.webp`}
-            alt="Aum Parekh — warm, direct eye contact"
+            alt="Aum Parekh, warm and direct eye contact"
             className="sec-portrait-img"
           />
           <span className="sec-paren" aria-hidden="true">)</span>
@@ -123,7 +123,7 @@ export function Projects({ onOpenProject }) {
 
       {/* "More coming" placeholder row */}
       <Reveal delay={60} className="proj-placeholder-row" aria-hidden="true">
-        <span className="proj-placeholder-paren">( — )</span>
+        <span className="proj-placeholder-paren">( … )</span>
         <span className="proj-placeholder-label">More coming</span>
       </Reveal>
     </section>
@@ -143,7 +143,7 @@ export function Writing() {
       <div className="writing-list" role="list">
         <Reveal className="writing-row" role="listitem">
           <span className="writing-date">( Soon )</span>
-          <span className="writing-title">First essay — in draft.</span>
+          <span className="writing-title">First essay: in draft.</span>
           <span className="writing-meta">Coming shortly</span>
         </Reveal>
 
@@ -181,7 +181,7 @@ export function AiWorkflows() {
         {/* Two AI paragraphs verbatim */}
         <Reveal delay={120} className="sec-bio">
           <p>
-            I use AI extensively — for research, for writing, for building
+            I use AI extensively: for research, for writing, for building
             tools, for thinking through hard problems out loud. This section
             is a running document of what's actually worked.
           </p>
@@ -218,7 +218,7 @@ export function MentalModels() {
       {/* Three quotes verbatim — large centered Bodoni Moda italic */}
       <Reveal as="blockquote" className="mm-quote" delay={60}>
         <p>
-          "The map is not the territory — but a better map still beats no
+          "The map is not the territory, but a better map still beats no
           map at all."
         </p>
       </Reveal>
@@ -254,7 +254,7 @@ export function Footer() {
           <p className="footer-tagline">
             Built with curiosity. Opinions are my own.
             <br />
-            <em>Work in progress — like everything worth doing.</em>
+            <em>Work in progress, like everything worth doing.</em>
           </p>
           <p className="footer-copy">
             &copy; {new Date().getFullYear()} Aum Parekh
