@@ -483,6 +483,14 @@
   white-space: nowrap;
 }
 
+/* Keeps ( portrait ) together as one row, even when the MACHINE line becomes a
+   vertical column on mobile. */
+.hero-portrait-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12em;
+}
+
 /* Parenthesis glyphs flanking the portrait — sized between giant and aside. */
 .hero-paren {
   display: inline-block;
@@ -569,13 +577,22 @@
     margin-bottom: 4vh;
   }
 
+  /*
+   * Read as three clear stanzas: a big gap BETWEEN the lines, tight spacing
+   * WITHIN each (the leading aside, the giant, and the trailing aside group as
+   * one unit) — otherwise the small asides scatter between the giants.
+   */
   .hero-display {
     align-items: center;
+    gap: 1.4rem;
   }
 
   .hero-line,
   .hero-line--machine {
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    row-gap: 0.04em;
   }
 }
 
