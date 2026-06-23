@@ -228,7 +228,7 @@
   left: 0;
   width: 100%;
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
   transform: translateY(100%);
 }
@@ -453,7 +453,7 @@
  */
 .hero-aside {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
   font-size: clamp(1rem, 2vw, 1.6rem);
   color: var(--ink);
@@ -708,7 +708,7 @@
  */
 .sec-bio {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
   font-size: 1.15rem;
   line-height: 1.5;
@@ -838,7 +838,7 @@
 /* Title: Bodoni serif, display-ish size */
 .proj-title {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
   font-size: clamp(1.5rem, 3.5vw, 2.4rem);
   line-height: 1.2;
@@ -849,7 +849,7 @@
 /* Summary: Bodoni italic, body size */
 .proj-summary {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-size: 1.1rem;
   line-height: 1.5;
   color: var(--ink);
@@ -1039,7 +1039,7 @@
  */
 .mm-quote {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
   font-size: clamp(1.4rem, 3vw, 2.4rem);
   line-height: 1.3;
@@ -1113,7 +1113,7 @@
 /* Footer tagline: Bodoni italic */
 .footer-tagline {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--ink);
@@ -1121,7 +1121,7 @@
 }
 
 .footer-tagline em {
-  font-style: italic; /* already italic — reinforces the block */
+  font-style: normal;
 }
 
 /* Copyright line */
@@ -1394,7 +1394,7 @@
 /* The <em> inside the title: Bodoni Moda italic accent (NOT a gradient) */
 .article-title em {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
   color: var(--ink);
 }
@@ -1402,7 +1402,7 @@
 /* Deck: Bodoni italic intro line */
 .article-deck {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-size: 1.15rem;
   line-height: 1.5;
   color: var(--ink);
@@ -1569,7 +1569,7 @@
 
 .principle p {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-size: 1.05rem;
   line-height: 1.55;
   color: var(--ink);
@@ -1637,7 +1637,7 @@
 
 .article-footnote p {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-size: 0.9rem;
   line-height: 1.6;
   color: rgba(25, 25, 25, 0.55);
@@ -1645,7 +1645,7 @@
 }
 
 .article-footnote em {
-  font-style: italic; /* already italic — reinforces */
+  font-style: normal;
 }
 
 /* ── sr-only (screen-reader only) ─────────────────────────────────────────

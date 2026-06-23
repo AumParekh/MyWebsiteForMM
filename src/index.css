@@ -95,6 +95,12 @@ img {
   display: block;
 }
 
+/* The Bodoni serif is used upright throughout — keep <em> emphasis upright too
+   (avoids faux-italic now that no italic face is loaded). */
+em {
+  font-style: normal;
+}
+
 button {
   font: inherit;
   color: inherit;
