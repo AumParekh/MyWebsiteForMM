@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Lenis from 'lenis'
 import './App.css'
 import Nav from './components/Nav.jsx'
 import Hero from './components/Hero.jsx'
@@ -11,10 +12,6 @@ import {
   Footer,
 } from './components/Sections.jsx'
 import ProjectModal from './components/ProjectModal.jsx'
-import CursorGlow from './components/CursorGlow.jsx'
-import Scene3D from './components/Scene3D.jsx'
-import WormholeProvider from './components/WormholeProvider.jsx'
-import { getWormhole } from './lib/wormhole.js'
 import { PROJECTS } from './data/projects.jsx'
 
 /*
@@ -41,36 +38,51 @@ function App() {
     return () => window.removeEventListener('hashchange', sync)
   }, [])
 
-  // Route changes run through the wormhole portal; the state swap happens at
-  // the hidden midpoint so the modal emerges out of the tunnel.
+  // Lenis smooth-scroll init.
+  // Skipped entirely for reduced-motion users — the RAF loop drives every frame,
+  // so we must cancel it on cleanup to avoid a zombie animation loop.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const lenis = new Lenis()
+
+    // RAF loop: lenis.raf(time) processes scroll easing each frame.
+    // We store the handle so cleanup can cancel it before lenis.destroy().
+    let rafId
+    function raf(time) {
+      lenis.raf(time)
+      rafId = requestAnimationFrame(raf)
+    }
+    rafId = requestAnimationFrame(raf)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      lenis.destroy()
+    }
+  }, [])
+
+  // Direct state + hash update (no wormhole).
   const openProject = (project) => {
-    getWormhole().run(() => {
-      setActiveProject(project)
-      const target = `#project/${project.id}`
-      if (window.location.hash !== target) {
-        window.history.pushState(null, '', target)
-      }
-    })
+    setActiveProject(project)
+    const target = `#project/${project.id}`
+    if (window.location.hash !== target) {
+      window.history.pushState(null, '', target)
+    }
   }
 
   const closeProject = () => {
-    getWormhole().run(() => {
-      setActiveProject(null)
-      if (window.location.hash.startsWith('#project/')) {
-        window.history.replaceState(
-          null,
-          '',
-          window.location.pathname + window.location.search,
-        )
-      }
-    })
+    setActiveProject(null)
+    if (window.location.hash.startsWith('#project/')) {
+      window.history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search,
+      )
+    }
   }
 
   return (
     <div className="site">
-      <Scene3D />
-      <WormholeProvider />
-      <CursorGlow />
       <Nav />
       <Hero />
       <main>

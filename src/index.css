@@ -1,74 +1,27 @@
 /* ----------------------------------------------------------------------------
    Design tokens & base styles
-   System: "Studio Aurora" — deep #0F1115 base, electric-indigo accent,
-   white hairlines, flat raised surfaces.
-   Type:   Bricolage Grotesque 800 (display, tight) · Hanken Grotesk (body/UI)
-           JetBrains Mono (code only)
+   System: "Editorial Brutalist" — bone #EFEDEA base, off-black #191919 ink.
+   Type:   Kumbh Sans 400/700 (display/UI) · Bodoni Moda italic (asides)
 ---------------------------------------------------------------------------- */
 
 :root {
-  /* Palette */
-  --bg: #0f1115;
-  --bg-elev: #14161c;
-  --bg-raise: #181b22;
-  --surface: #181b22;
-  --ink: #edeff4;
-  --ink-dim: #9aa1b2;
-  --ink-faint: #7e8597;
-  --accent: #6d7bff;
-  --accent-2: #a5afff;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.12);
-  --glass: #181b22;
-  --glass-strong: #1d212a;
-
-  /* Gradients — text falloff toward the indigo accent */
-  --grad-accent: linear-gradient(120deg, #edeff4 25%, var(--accent-2) 100%);
-  --grad-faint: linear-gradient(
-    140deg,
-    rgba(109, 123, 255, 0.12),
-    rgba(109, 123, 255, 0.05)
-  );
-
-  /* Type */
-  --font-display: 'Bricolage Grotesque', 'Hanken Grotesk', sans-serif;
-  --font-serif: 'Hanken Grotesk', -apple-system, sans-serif;
-  --font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', sans-serif;
-  --font-label: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-
-  /* Fluid type scale — Bricolage 800 is wide and heavy; cap the hero near 80px */
-  --text-hero: clamp(2.6rem, 7.2vw, 5rem);
-  --text-h2: clamp(1.9rem, 4.2vw, 3rem);
-  --text-h3: clamp(1.2rem, 2vw, 1.45rem);
-  --text-lede: clamp(1rem, 1.4vw, 1.1rem);
-  --text-body: 1rem;
-  --text-small: 0.875rem;
-  --text-label: 0.75rem;
-
-  /* Rhythm */
-  --space-section: clamp(6rem, 14vh, 10rem);
-  --container: 75rem;
-  --gutter: clamp(1.25rem, 4vw, 3rem);
-  --radius: 16px;
-  --radius-lg: 16px;
-
-  /* Motion */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-snap: cubic-bezier(0.3, 1.4, 0.4, 1);
-  --dur: 0.8s;
+  --bone: #EFEDEA;
+  --ink: #191919;
+  --sans: 'Kumbh Sans', system-ui, sans-serif;
+  --serif: 'Bodoni Moda', Georgia, serif;
+  --ease-media: cubic-bezier(0.82, 0, 0.18, 1);
+  --ease-tx: cubic-bezier(0.9, 0, 0.1, 1);
+  --ease-link: cubic-bezier(0.98, 0, 0.02, 1);
+  --display: calc(0.75em + 12vw);
+  --display-lh: 0.78;
+  --display-ls: -0.05em;
+  --gutter: clamp(1.5rem, 5vw, 4rem);
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 html,
@@ -78,36 +31,63 @@ body,
   padding: 0;
 }
 
+html {
+  /* Lenis drives scroll; keep as anchor fallback */
+  scroll-behavior: smooth;
+  /* Firefox custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) var(--bone);
+}
+
 body {
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-family: var(--sans);
   font-weight: 400;
+  font-size: 1rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--ink);
-  background: var(--bg);
-  line-height: 1.65;
+  background: var(--bone);
+  line-height: 1.2;
   overflow-x: hidden;
+  cursor: crosshair;
 }
 
-/* Film-grain texture overlay over everything, very low opacity */
+/* Links and buttons opt into pointer */
+a,
+button {
+  cursor: pointer;
+}
+
+/* Film-grain texture overlay — fractal noise, very low opacity */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* WebKit custom scrollbar — thin ink on bone, no border-radius */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bone);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink);
+}
+
 ::selection {
-  background: var(--accent);
-  color: var(--bg);
+  background: var(--ink);
+  color: var(--bone);
 }
 
 a {
   color: inherit;
+  text-decoration: none;
 }
 
 img {
@@ -118,28 +98,13 @@ img {
 button {
   font: inherit;
   color: inherit;
+  background: none;
+  border: 0;
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* Subtle custom scrollbar (WebKit) */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-  background: #262a35;
-  border-radius: 8px;
-  border: 2px solid var(--bg);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #353b4d;
 }
 
 .sr-only {
@@ -154,51 +119,7 @@ button {
   border: 0;
 }
 
-/* --------------------------------------------------------- liquid glass ---
-   Frosted surface with a luminous gradient hairline border (masked ::before),
-   per the reference design. Apply alongside a border-radius. */
-.liquid-glass {
-  position: relative;
-  overflow: hidden;
-  border: none;
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-}
-
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.15) 20%,
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 255, 255, 0) 60%,
-    rgba(255, 255, 255, 0.15) 80%,
-    rgba(255, 255, 255, 0.45) 100%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-.glass-pill {
-  background: rgba(255, 255, 255, 0.04);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  backdrop-filter: blur(16px) saturate(180%);
-  border-radius: 9999px;
-  box-shadow: none !important;
-}
-
-/* Calm fallback: no smooth scrolling, no grain shimmer for reduced motion */
+/* Calm fallback: no smooth scrolling, neutralise animation/transition durations */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
