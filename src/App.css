@@ -580,54 +580,65 @@
  * can't fit beside its giant wraps and centres below it.
  */
 /*
- * Mobile — a completely different, Adcker-style treatment: ONLY the giant words
- * stacked and centred, with the portrait inline in ( ) under SYSTEMS. The serif
- * asides, hairline rule and ( scroll ) cue are all dropped so the giants carry
- * the screen, exactly like Adcker's mobile hero.
+ * Tablet + mobile (<=1024) — the FULL statement as a left-aligned editorial
+ * stack. Each stanza: a small italic leading aside (top-left), the GIANT, and
+ * the trailing aside dropped to the RIGHT edge — a stacked echo of the desktop
+ * marginalia, so the asides feel placed, not scattered. Tight within a stanza,
+ * clear gaps between. Fits any width and reads as the poem.
  */
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
   .hero-content {
     padding-top: 4rem;
-    justify-content: center;
   }
 
   .hero-headline-block {
-    align-items: center;
-    text-align: center;
+    align-items: stretch;   /* lines span full width so trailing asides can sit right */
+    text-align: left;
     width: 100%;
     margin-bottom: 0;
   }
 
   .hero-display {
-    align-items: center;
-    gap: 0.12em;            /* giants stack close, Adcker-tight */
+    align-items: stretch;
+    gap: 1.1rem;            /* clear gap between the three stanzas */
   }
 
   .hero-line,
   .hero-line--machine {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    row-gap: 0.04em;
+    align-items: flex-start;
+    justify-content: flex-start;
+    row-gap: 0.12rem;       /* tight: asides hug their giant */
   }
 
-  /* Bigger giants now that they own the screen. */
   .hero-giant {
-    font-size: min(17vw, 26svh);
+    /* max() floor is essential: in some emulators svh resolves to 0, which
+       would collapse min(15vw, 21svh) to 0 and kill the giants. */
+    font-size: max(2.2rem, min(15vw, 21svh));
   }
 
-  /* SYSTEMS sits above its ( portrait ), kept inline as one row. */
+  /* SYSTEMS sits above its ( portrait ), left-aligned with the stack. */
   .hero-machine-core {
     flex-direction: column;
-    align-items: center;
-    row-gap: 0.1em;
+    align-items: flex-start;
+    row-gap: 0.2em;
   }
+}
 
-  /* Strip the marginalia, rule and scroll cue — giants only. */
-  .hero-aside,
+/*
+ * Mobile only (<=640) — drop the hairline rule and ( scroll ) cue, and let the
+ * trailing aside fall to the right edge: on a narrow screen the giant nearly
+ * reaches it, so it reads as marginalia rather than a stray floating word.
+ */
+@media (max-width: 640px) {
   .hero-rule,
   .hero-scroll-indicator {
     display: none;
+  }
+
+  .hero-line > .hero-aside:last-child {
+    align-self: flex-end;
+    text-align: right;
   }
 }
 
