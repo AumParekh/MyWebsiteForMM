@@ -319,9 +319,12 @@
 @media (max-width: 860px) {
   .nav-overlay {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+    /* three stacked rows: links · portrait · contact */
+    grid-template-rows: auto auto auto;
     justify-items: center;
-    padding-top: 5rem;   /* clear the top bar */
+    align-content: center;       /* centre the whole stack vertically */
+    gap: clamp(1.5rem, 5vh, 2.5rem);
+    padding-top: 5rem;           /* clear the top bar */
   }
 
   .nav-overlay__links {
@@ -330,9 +333,22 @@
     text-align: center;
   }
 
-  /* Hide portrait on mobile */
+  /* Shrink the links with the viewport so the longest label ("AI & Workflows")
+     never overflows narrow screens (the 1.5rem desktop floor was too wide). */
+  .nav-primary-link {
+    font-size: clamp(1rem, 5.5vw, 2.2rem);
+  }
+
+  /* Portrait now sits in the gap between the links and the contact row. */
   .nav-overlay__portrait {
-    display: none;
+    display: flex;
+    justify-content: center;
+  }
+  .nav-portrait-img {
+    width: min(42vw, 11rem);     /* smaller than desktop so the stack fits */
+  }
+  .nav-portrait-paren {
+    font-size: clamp(2rem, 9vw, 3rem);
   }
 
   .nav-overlay__contact {
