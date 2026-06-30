@@ -97,8 +97,8 @@ export function Projects({ onOpenProject }) {
           <div className="proj-portrait-frame">
             <span className="sec-paren sec-paren--proj" aria-hidden="true">(</span>
             <img
-              src={`${import.meta.env.BASE_URL}aum-socratic.webp`}
-              alt="Aum at a desk with a notebook"
+              src={`${import.meta.env.BASE_URL}${project.image}`}
+              alt={project.imageAlt}
               className="proj-portrait-img"
             />
             <span className="sec-paren sec-paren--proj" aria-hidden="true">)</span>

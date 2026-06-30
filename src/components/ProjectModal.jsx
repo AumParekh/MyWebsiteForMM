@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import SocraticArticle from './SocraticArticle.jsx'
+import FrmPortalArticle from './FrmPortalArticle.jsx'
 
 /*
  * ProjectModal — phase 3e reskin
@@ -9,7 +10,8 @@ import SocraticArticle from './SocraticArticle.jsx'
  *   - Body scroll-lock while open
  *   - Copy-share-link with "Link copied" feedback (2.2 s)
  *   - role="dialog", aria-modal, sr-only "Close" text
- *   - Renders <SocraticArticle /> when project.id === 'socratic'
+ *   - Renders the per-project article keyed by project.id
+ *     (SocraticArticle for 'socratic', FrmPortalArticle for 'frm-portal')
  *
  * Presentation — bone/ink editorial drawer:
  *   - Backdrop: near-opaque bone, blur(4px), fades in
@@ -90,6 +92,7 @@ export default function ProjectModal({ project, onClose }) {
         {/* Article content */}
         <div id="project-modal-title" className="project-modal-body">
           {project.id === 'socratic' && <SocraticArticle />}
+          {project.id === 'frm-portal' && <FrmPortalArticle />}
         </div>
       </div>
     </div>

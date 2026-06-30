@@ -69,6 +69,34 @@ export const SocraticIcon = () => (
   </svg>
 )
 
+export const FrmPortalIcon = () => (
+  <svg
+    viewBox="0 0 64 64"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    aria-hidden="true"
+  >
+    {/* open book / syllabus */}
+    <path
+      d="M32 16c-4-2.4-9-3.4-14-3v30c5-.4 10 .6 14 3 4-2.4 9-3.4 14-3V13c-5-.4-10 .6-14 3Z"
+      fill="rgba(255, 255, 255, 0.08)"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+    <line x1="32" y1="16" x2="32" y2="46" stroke="currentColor" strokeWidth="1.6" />
+    {/* spaced-repetition ladder ticks */}
+    <line x1="23" y1="23" x2="27" y2="23" stroke="currentColor" strokeWidth="1.4" opacity="0.75" />
+    <line x1="23" y1="29" x2="27" y2="29" stroke="currentColor" strokeWidth="1.4" opacity="0.75" />
+    <line x1="37" y1="23" x2="41" y2="23" stroke="currentColor" strokeWidth="1.4" opacity="0.75" />
+    <line x1="37" y1="29" x2="41" y2="29" stroke="currentColor" strokeWidth="1.4" opacity="0.75" />
+    {/* retrieval node + vector links */}
+    <circle cx="48" cy="50" r="6" stroke="currentColor" strokeWidth="1.6" />
+    <path d="M48 47.5v5M45.5 50h5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    <line x1="18" y1="50" x2="42" y2="50" stroke="currentColor" strokeWidth="1.4" opacity="0.6" />
+  </svg>
+)
+
 export const PROJECTS = [
   {
     id: 'socratic',
@@ -77,6 +105,19 @@ export const PROJECTS = [
     summary:
       'A dual-screen Socratic co-pilot that turns a static script into a real-time, branching, AI-driven session: the room sees one question, the operator sees the answer key and a row of steering buttons.',
     icon: <SocraticIcon />,
+    image: 'aum-socratic.webp',
+    imageAlt: 'Aum at a desk with a notebook',
+    cta: 'Read the build',
+  },
+  {
+    id: 'frm-portal',
+    tag: 'RAG · Spaced repetition · Exam prep',
+    title: 'What if a study portal made every scheduling decision, and the AI only ever taught?',
+    summary:
+      'A single-user FRM Part II portal where deterministic code owns the registrar work — due-queues, pacing, error counting, mode routing — and a RAG-grounded LLM does only what varies: explain, quiz, grade, and reteach against six textbooks.',
+    icon: <FrmPortalIcon />,
+    image: 'aum-frm.jpg',
+    imageAlt: 'Aum in a suit against a city skyline',
     cta: 'Read the build',
   },
 ]
