@@ -8,8 +8,8 @@ export default function FrmPortalArticle() {
       <header className="article-head">
         <span className="article-eyebrow">Project · Build notes</span>
         <h1 className="article-title">
-          Building a Study Portal Where <em>Code Is the Registrar</em> and
-          the AI Only Teaches
+          Building a Study Portal Where Code Is the Registrar and{' '}
+          <em>the AI Only Teaches</em>
         </h1>
         <p className="article-deck">
           How to study for a dense professional exam by drawing a hard line:
