@@ -21,11 +21,11 @@ export default function FrmPortalArticle() {
 
       <section className="article-lead">
         <p>
-          <strong>The FRM Part II exam is a wall of dense material</strong> —
+          <strong>The FRM Part II exam is a wall of dense material:</strong>{' '}
           six textbooks, hundreds of learning objectives, and a question style
           that punishes anyone who confuses a concept with its near-sibling.
           The portal is a single-user web app for studying it: you open it,
-          click START, and it runs the session — reviewing what is due,
+          click START, and it runs the session, reviewing what is due,
           quizzing, teaching new material, and generating recall prompts for
           later.
         </p>
@@ -102,8 +102,8 @@ export default function FrmPortalArticle() {
           <span className="principle-label">Second principle</span>
           <p>
             Name the failure modes before you build. The architecture is mostly
-            a set of defenses against mistakes you can predict in advance — write
-            them down first and the design falls out of them.
+            a set of defenses against mistakes you can predict in advance.
+            Write them down first and the design falls out of them.
           </p>
         </aside>
       </section>
@@ -112,18 +112,18 @@ export default function FrmPortalArticle() {
         <h2>3. Grounding every claim in the books</h2>
         <p>
           The heart of the tool is retrieval-augmented generation. The textbooks
-          are chunked (~800–900 tokens each, with overlap), embedded into
+          are chunked (~800 to 900 tokens each, with overlap), embedded into
           vectors, and stored in a Postgres table with a vector index. When the
           student asks a question, the query is embedded the same way, the
           nearest passages are pulled by similarity, and only those passages are
-          handed to the model — with a non-negotiable instruction: ground every
+          handed to the model, with a non-negotiable instruction: ground every
           claim in the provided text, and if the passages don't cover it, say so
           rather than inventing an answer.
         </p>
         <p>
           A subtle but decisive detail: how many passages to retrieve depends on
-          the task. A focused chat answer needs 8–10 chunks. But diffing a
-          student's recall of an entire reading needs far more — early versions
+          the task. A focused chat answer needs 8 to 10 chunks. But diffing a
+          student's recall of an entire reading needs far more: early versions
           pulled 8 chunks for that and the model flagged "gaps" for concepts it
           had simply never been shown. Raising the retrieval to 16 chunks, built
           from a query of the reading title plus every learning objective, let it
@@ -134,7 +134,7 @@ export default function FrmPortalArticle() {
           <p>
             A grounded model is only as good as what you retrieve for it. When it
             looks like it "doesn't know" something, the first suspect is the
-            retrieval, not the model — you may simply never have handed it the
+            retrieval, not the model. You may simply never have handed it the
             passage.
           </p>
         </aside>
@@ -218,13 +218,13 @@ export default function FrmPortalArticle() {
           tools the model can call: log an error, add a confusable pair, create a
           recall prompt, update an objective's status, search the objectives,
           search the book chunks, fetch what's due. The model never edits the
-          database directly and never invents an ID — it must look one up first.
+          database directly and never invents an ID; it must look one up first.
           Every enum argument is strict, and the database rejects anything
           off-list.
         </p>
         <p>
           So when a student gets a question wrong mid-conversation, the model
-          doesn't just say "noted" — it calls the error-logging tool with the
+          doesn't just say "noted." It calls the error-logging tool with the
           concept, the trap type, and the student's stated confidence, and a real
           row appears in the boosted-review queue. The teaching is fluid; the
           bookkeeping is exact.
@@ -242,7 +242,7 @@ export default function FrmPortalArticle() {
       <section className="article-section">
         <h2>6. START is pure code, no model involved</h2>
         <p>
-          The single most important screen — what to do this session — has no LLM
+          The single most important screen, what to do this session, has no LLM
           in it at all. A plain function reads the database and assembles the
           session plan: it computes pacing (objectives remaining ÷ days until the
           exam), counts what review is due, finds the book with the most
@@ -298,9 +298,9 @@ export default function FrmPortalArticle() {
           </li>
           <li>
             <strong>Runtime-loaded files weren't bundled.</strong> The instruction
-            files read from disk at runtime were absent in the production bundle —
-            fine locally, a crash in production — until the build was told
-            explicitly to include them.
+            files read from disk at runtime were absent in the production
+            bundle (fine locally, a crash in production) until the build was
+            told explicitly to include them.
           </li>
         </ul>
         <aside className="principle">
@@ -318,12 +318,12 @@ export default function FrmPortalArticle() {
         <h2>8. How it was actually built</h2>
         <p>
           The portal was built with a subagent-driven method: a fresh agent per
-          task working from a precise, self-contained brief — exact files to
+          task working from a precise, self-contained brief: exact files to
           touch, exact interfaces to implement, and an explicit list of what not
           to touch. A controller session integrated each piece, ran the type
           checker and the build after every integration, tested against the live
           database and APIs rather than mocks, cleaned up test data, and
-          committed. Logic-heavy work — the prompts and the scheduling math — got
+          committed. Logic-heavy work, the prompts and the scheduling math, got
           reviewed at the spec level before any code was written.
         </p>
         <aside className="principle">
@@ -331,7 +331,7 @@ export default function FrmPortalArticle() {
           <p>
             Parallel agents need narrow, written briefs and a controller that
             verifies against reality after every merge. The discipline of the
-            integration loop — typecheck, build, runtime-test, clean — is what
+            integration loop (typecheck, build, runtime-test, clean) is what
             keeps a fleet of agents from compounding each other's mistakes.
           </p>
         </aside>
@@ -357,8 +357,8 @@ export default function FrmPortalArticle() {
             much you retrieve to the task.
           </li>
           <li>
-            Give each pedagogical technique a concrete mechanic — a table, a
-            column, a deterministic function — not just a line in a prompt.
+            Give each pedagogical technique a concrete mechanic (a table, a
+            column, a deterministic function), not just a line in a prompt.
           </li>
           <li>
             Keep the decisions that must always be right (scheduling, pacing,

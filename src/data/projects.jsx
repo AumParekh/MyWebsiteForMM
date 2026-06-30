@@ -114,7 +114,7 @@ export const PROJECTS = [
     tag: 'RAG · Spaced repetition · Exam prep',
     title: 'What if a study portal made every scheduling decision, and the AI only ever taught?',
     summary:
-      'A single-user FRM Part II portal where deterministic code owns the registrar work — due-queues, pacing, error counting, mode routing — and a RAG-grounded LLM does only what varies: explain, quiz, grade, and reteach against six textbooks.',
+      'A single-user FRM Part II portal where deterministic code owns the registrar work (due-queues, pacing, error counting, mode routing) and a RAG-grounded LLM does only what varies: explain, quiz, grade, and reteach against six textbooks.',
     icon: <FrmPortalIcon />,
     image: 'aum-frm.jpg',
     imageAlt: 'Aum in a suit against a city skyline',
