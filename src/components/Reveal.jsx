@@ -35,17 +35,56 @@ export default function Reveal({
       setShown(true)
       return undefined
     }
+
+    let done = false
+
+    // Geometry check — true once the element's top has risen into the lower
+    // ~90% of the viewport (and it hasn't scrolled past the top). Works for
+    // elements taller than the viewport, where an IO ratio threshold can be
+    // hard to reach.
+    const inView = () => {
+      const r = el.getBoundingClientRect()
+      return r.top < window.innerHeight * 0.9 && r.bottom > 0
+    }
+
+    const reveal = () => {
+      if (done) return
+      done = true
+      setShown(true)
+      io.disconnect()
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+
+    // IntersectionObserver is the fast path. But Lenis' rAF-driven smooth
+    // scroll doesn't always re-trigger IO callbacks, so we also listen to the
+    // native scroll event Lenis re-dispatches (same technique Nav uses for the
+    // progress bar) as a guaranteed fallback — plus an immediate check for
+    // anything already on screen at mount.
+    const onScroll = () => {
+      if (inView()) reveal()
+    }
+
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true)
-          io.disconnect() // run once
-        }
+        if (entry.isIntersecting) reveal()
       },
-      { threshold: 0.15 },
+      { threshold: 0, rootMargin: '0px 0px -10% 0px' },
     )
     io.observe(el)
-    return () => io.disconnect()
+
+    if (inView()) {
+      reveal()
+    } else {
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll)
+    }
+
+    return () => {
+      io.disconnect()
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
   return (
