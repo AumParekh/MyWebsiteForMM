@@ -1,15 +1,23 @@
 {
   "_howToEdit": [
     "Sample tiles for the Try Demo buttons on the How to Play page. They never affect the real board.",
-    "\"row\" sets which value the demo tile shows (0 = 10 points, 2 = 30 points, and so on)."
+    "\"row\" sets which value the demo tile shows (0 = 10 points, 2 = 30 points, and so on).",
+    "A category can have a list of demo tiles: each Try Demo click shows the next one."
   ],
   "characterSecondsPerClue": 5,
   "tiles": {
-    "word": {
-      "row": 0,
-      "clue": "Body of water, heard when you look (3)",
-      "answer": "Sea"
-    },
+    "word": [
+      {
+        "row": 0,
+        "clue": "Cilia turns into a shade of purple (5)",
+        "answer": "Lilac"
+      },
+      {
+        "row": 0,
+        "clue": "Daisy loses last lily, laboriously leads to subsidies (4)",
+        "answer": "Aids"
+      }
+    ],
     "movie": {
       "row": 0,
       "plot": "A nervous clownfish loses his only son when the boy is captured by a diver and taken to a fish tank in a dentist's office in Sydney. Determined to bring him home, the worried father crosses the whole ocean. Along the way he teams up with a cheerful blue fish who cannot remember anything for more than a few seconds, surfs the current with a group of laid-back sea turtles, and escapes from sharks who have sworn off eating fish.",

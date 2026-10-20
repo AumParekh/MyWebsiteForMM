@@ -598,10 +598,17 @@
           characterSecondsPerClue: demo.characterSecondsPerClue || 5,
         });
         document.querySelectorAll('[data-demo]').forEach((btn) => {
+          // A category can have several demo tiles; each click shows the next one.
+          const entry = demo.tiles[btn.dataset.demo];
+          const tiles = Array.isArray(entry) ? entry : [entry];
+          let turn = 0;
+          if (tiles.length > 1) btn.textContent = `Try Demo 1 of ${tiles.length}`;
           btn.addEventListener('click', () => {
             const type = btn.dataset.demo;
             const category = content.categories.find((c) => c.type === type) || { type, name: btn.dataset.name };
-            const tile = demo.tiles[type];
+            const tile = tiles[turn % tiles.length];
+            turn += 1;
+            if (tiles.length > 1) btn.textContent = `Try Demo ${(turn % tiles.length) + 1} of ${tiles.length}`;
             openTile({
               category: Object.assign({ type }, category),
               tile,
