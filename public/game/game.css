@@ -440,8 +440,19 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
   gap: clamp(10px, 2.4vmin, 32px);
   text-align: center;
 }
+.hook-prompt {
+  max-width: 24em;
+  margin: 0;
+  padding: 0.5em 1em;
+  border: clamp(2px, 0.4vmin, 5px) solid var(--gold);
+  border-radius: var(--radius-lg);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--ink);
+  font: 700 clamp(18px, 4.6vmin, 66px)/1.2 var(--font-body);
+  text-wrap: balance;
+}
 .hook-icon { position: relative; color: var(--gold); }
-.hook-icon svg { display: block; width: clamp(80px, 26vmin, 340px); height: auto; filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5)); }
+.hook-icon svg { display: block; width: clamp(56px, 18vmin, 250px); height: auto; filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5)); }
 .hook-stage.playing .hook-icon svg { animation: bob 0.9s ease-in-out infinite; }
 @keyframes bob {
   0%, 100% { transform: translateY(0) rotate(-4deg); }
@@ -705,8 +716,22 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 .tag.alt { background: var(--gold); color: var(--gold-ink); }
 .cat-card h3 { margin: 0; font: 700 1.4em/1.05 var(--font-head); text-transform: uppercase; letter-spacing: 0.01em; }
 .cat-card p { flex: 1; margin: 0; color: #e4e8ff; }
+.cat-card .cat-sub {
+  flex: none;
+  margin-top: -0.35em;
+  color: var(--gold);
+  font: 700 0.8em/1.1 var(--font-head);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .cat-card .btn { align-self: flex-start; font-size: 0.85em; }
 
 .ready { text-align: center; }
 .ready h2 { font-size: clamp(56px, 10vw, 180px); color: var(--gold); }
 .ready .btn { font-size: 1.4em; padding: 0.8em 2em; }
+
+/* Short screens (phone sideways): drop the decorative icon so the prompt and controls fit. */
+@media (max-height: 500px) {
+  .hook-stage .hook-icon,
+  .hook-stage .eq { display: none; }
+}

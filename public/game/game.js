@@ -230,7 +230,9 @@
         audio.currentTime = start;
       }, 'stop');
 
-      const stage = el('div', { class: 'hook-stage' }, noteIcon, eq, status,
+      // Shown before the host presses Play, e.g. asking each team to send up a new player.
+      const prompt = ctx.category.prompt && el('p', { class: 'hook-prompt' }, ctx.category.prompt);
+      const stage = el('div', { class: 'hook-stage' }, prompt, noteIcon, eq, status,
         el('div', { class: 'hook-controls' }, play, pause, restart, stop));
       ctx.body.append(stage);
 
@@ -453,7 +455,7 @@
       body,
       actions);
 
-    const ctx = { tile, cfg, body, actions, back, cleanups: [], onShown: [], focusOnShow: null };
+    const ctx = { category, tile, cfg, body, actions, back, cleanups: [], onShown: [], focusOnShow: null };
     const backBtn = button(demo ? 'Close Demo' : 'Back to Board', '', close);
     actions.append(backBtn);
     builders[type](ctx);
@@ -587,6 +589,9 @@
       .then(([content, demo]) => {
         setTitle(content.title);
         renderMiniGrid(content);
+        content.categories.forEach((cat) => {
+          document.querySelectorAll(`[data-cat-name="${cat.type}"]`).forEach((n) => { n.textContent = cat.name; });
+        });
 
         // Demos use the same tile view but never touch the saved board state.
         const demoCfg = Object.assign({}, content, {
@@ -598,7 +603,7 @@
             const category = content.categories.find((c) => c.type === type) || { type, name: btn.dataset.name };
             const tile = demo.tiles[type];
             openTile({
-              category: { type, name: category.name },
+              category: Object.assign({ type }, category),
               tile,
               row: tile.row != null ? tile.row : 2,
               cfg: demoCfg,

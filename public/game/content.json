@@ -2,6 +2,7 @@
   "_howToEdit": [
     "This file holds all the real game content. Edit the text, save, and push. No code changes needed.",
     "Each category has exactly 5 tiles, in row order from top (row 1) to bottom (row 5).",
+    "\"name\" is the title shown on the board and the How to Play page; \"short\" is the label on the small example board. Aaja Nachle's \"prompt\" is the line shown before the song plays.",
     "Image and MP3 file names refer to files in the assets folder, for example \"fetch-1.jpg\" means assets/fetch-1.jpg.",
     "Fetch: \"caption\" is optional text shown under the picture. Hook Step: the song loops between \"start\" and \"end\" (minutes:seconds) until Stop is pressed; leave both as \"\" to loop the whole song. \"answer\" is optional; if filled in, a Reveal Answer button shows it.",
     "Character: exactly 5 clues, from hardest to easiest. \"image\" is optional (leave it as \"\" for none).",
@@ -33,8 +34,8 @@
   "categories": [
     {
       "type": "word",
-      "name": "Guess the Word",
-      "short": "Word",
+      "name": "Cryptic Crossy",
+      "short": "Crossy",
       "tiles": [
         {
           "clue": "Listen, rearranged, is quiet (6)",
@@ -60,8 +61,8 @@
     },
     {
       "type": "movie",
-      "name": "Guess the Movie from the Plot",
-      "short": "Movie",
+      "name": "Picture Abhi Baaki Hai",
+      "short": "Picture",
       "tiles": [
         {
           "plot": "A reserved office clerk, whose marriage is devoid of affection, assumes a flamboyant disguise to participate in a dance competition alongside his unsuspecting wife. While she becomes captivated by his boisterous alter ego, she remains oblivious to the fact that the two men competing for her affection are, in reality, one and the same person. His elaborate deception soon forces him to confront whether love can flourish without being recognised for who he truly is.",
@@ -87,8 +88,8 @@
     },
     {
       "type": "fetch",
-      "name": "Fetch the Object",
-      "short": "Fetch",
+      "name": "Jagga Jasoos",
+      "short": "Jagga",
       "tiles": [
         {
           "image": "fetch-1.jpg",
@@ -114,8 +115,9 @@
     },
     {
       "type": "hook",
-      "name": "Hook Step",
-      "short": "Hook Step",
+      "name": "Aaja Nachle",
+      "short": "Nachle",
+      "prompt": "Every team, send up one player who hasn't come up yet in this game.",
       "tiles": [
         {
           "audio": "hook-1.mp3",
@@ -151,8 +153,8 @@
     },
     {
       "type": "character",
-      "name": "Guess the Character",
-      "short": "Character",
+      "name": "Main Kaun?",
+      "short": "Main Kaun",
       "tiles": [
         {
           "clues": [
