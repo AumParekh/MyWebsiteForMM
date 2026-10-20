@@ -30,6 +30,7 @@
     pause: '<path d="M6 4.5h4.5v15H6zM13.5 4.5H18v15h-4.5z"/>',
     restart: '<path d="M12 4.5V1.5L7 6l5 4.5V7.5a5 5 0 1 1-5 5H4a8 8 0 1 0 8-8z"/>',
     stop: '<path d="M5.5 5.5h13v13h-13z"/>',
+    timer: '<path d="M9 1.5h6v2H9zM12 5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zm1 9.2-4.2 2.4-1-1.7 3.2-1.9V8.5h2z"/>',
   };
 
   function icon(name) {
@@ -58,6 +59,31 @@
 
   function assetUrl(name) {
     return ASSETS + name;
+  }
+
+  // 154 -> "2:34"
+  function formatClock(seconds) {
+    const s = Math.max(0, Math.ceil(seconds));
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  }
+
+  // Two short tones, used when a countdown runs out.
+  let audioCtx;
+  function beep() {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.25].forEach((delay) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const t = audioCtx.currentTime + delay;
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.25, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      });
+    } catch (e) {}
   }
 
   // "1:24" -> 84 seconds. Plain numbers are taken as seconds.
@@ -174,12 +200,58 @@
   const builders = {
     word(ctx) {
       ctx.body.append(fitBox('clue-box', 140, el('p', { class: 'clue-text' }, ctx.tile.clue)));
+      addBuzzTimer(ctx);
       addReveal(ctx, ctx.tile.answer);
     },
 
     movie(ctx) {
-      ctx.body.append(fitBox('plot-box', 76, el('p', { class: 'plot-text' }, ctx.tile.plot)));
-      addReveal(ctx, ctx.tile.answer);
+      // The tile stays open for a fixed time, then the answer reveals itself.
+      const total = (ctx.cfg.movieSeconds || 180) * 1000;
+      const countLabel = el('span', { class: 'countdown-label' }, 'Answer in');
+      const countNum = el('span', { class: 'countdown-num' }, formatClock(total / 1000));
+      const barFill = el('span', { style: 'width: 100%' });
+      const status = el('div', { class: 'movie-status' },
+        el('span', { class: 'clue-count' },
+          Number.isInteger(total / 60000) ? `${total / 60000}-minute timer` : `${formatClock(total / 1000)} timer`),
+        el('span', { class: 'countdown' }, countLabel, countNum),
+        el('div', { class: 'timer-bar' }, barFill));
+      ctx.body.append(status, fitBox('plot-box', 76, el('p', { class: 'plot-text' }, ctx.tile.plot)));
+      addBuzzTimer(ctx);
+
+      let endsAt = 0;
+      let timer = null;
+      const reveal = addReveal(ctx, ctx.tile.answer, null, () => finish('Answer revealed'));
+
+      function tick() {
+        const left = endsAt - Date.now();
+        if (left <= 0) {
+          finish("Time's up");
+          beep();
+          reveal();
+          return;
+        }
+        countNum.textContent = formatClock(left / 1000);
+        barFill.style.width = `${(left / total) * 100}%`;
+        status.classList.toggle('urgent', left <= 10000);
+      }
+
+      function finish(label) {
+        if (timer === 'done') return;
+        clearInterval(timer);
+        timer = 'done';
+        status.classList.remove('urgent');
+        status.classList.add('stopped');
+        countLabel.textContent = label;
+        countNum.textContent = '';
+        barFill.style.width = '0%';
+      }
+
+      ctx.onShown.push(() => {
+        if (timer === 'done') return;
+        endsAt = Date.now() + total;
+        timer = setInterval(tick, 200);
+      });
+      ctx.cleanups.push(() => { if (timer !== 'done') clearInterval(timer); });
     },
 
     fetch(ctx) {
@@ -188,6 +260,7 @@
       img.addEventListener('error', () => {
         img.replaceWith(el('div', { class: 'missing' }, `Image not found: ${src}`));
       });
+      if (ctx.category.prompt) ctx.body.append(el('p', { class: 'tile-prompt' }, ctx.category.prompt));
       ctx.body.append(el('figure', { class: 'fetch-fig' }, img));
       if (ctx.tile.caption) ctx.body.append(el('p', { class: 'fetch-caption' }, ctx.tile.caption));
     },
@@ -231,7 +304,7 @@
       }, 'stop');
 
       // Shown before the host presses Play, e.g. asking each team to send up a new player.
-      const prompt = ctx.category.prompt && el('p', { class: 'hook-prompt' }, ctx.category.prompt);
+      const prompt = ctx.category.prompt && el('p', { class: 'tile-prompt' }, ctx.category.prompt);
       const stage = el('div', { class: 'hook-stage' }, prompt, noteIcon, eq, status,
         el('div', { class: 'hook-controls' }, play, pause, restart, stop));
       ctx.body.append(stage);
@@ -274,7 +347,11 @@
       const { tile, cfg } = ctx;
       const clues = tile.clues || [];
       const points = cfg.characterPoints || [50, 40, 30, 20, 10];
-      const perClue = (cfg.characterSecondsPerClue || 15) * 1000;
+      // How long each clue stays before the next one: a single number, or a
+      // list per clue (the last entry repeats). The final entry is also the
+      // wait before the answer reveals itself.
+      const seconds = cfg.characterSecondsPerClue || 15;
+      const durationOf = (i) => (Array.isArray(seconds) ? seconds[Math.min(i, seconds.length - 1)] : seconds) * 1000;
       const last = clues.length - 1;
 
       const clueCount = el('span', { class: 'clue-count' });
@@ -294,6 +371,7 @@
       const pauseBtn = button('Pause', '', togglePause, 'pause');
       const stopBtn = button('Stop', '', stopClues, 'stop');
       ctx.actions.append(pauseBtn, stopBtn);
+      addBuzzTimer(ctx);
       const reveal = addReveal(ctx, tile.answer, tile.image, () => {
         if (phase === 'running' || phase === 'paused') finish('revealed');
       });
@@ -301,7 +379,7 @@
       let idx = 0;
       let phase = 'ready'; // ready | running | paused | stopped | revealed
       let endsAt = 0;
-      let remaining = perClue;
+      let remaining = durationOf(0);
       let timer = null;
 
       function render() {
@@ -317,7 +395,7 @@
         worth.textContent = `Worth ${points[idx]} pts`;
         countLabel.textContent = phase === 'paused' ? 'Paused' : idx < last ? 'Next clue in' : 'Answer in';
         countNum.textContent = Math.max(0, Math.ceil(remaining / 1000));
-        barFill.style.width = `${Math.max(0, Math.min(1, remaining / perClue)) * 100}%`;
+        barFill.style.width = `${Math.max(0, Math.min(1, remaining / durationOf(idx))) * 100}%`;
       }
 
       function tick() {
@@ -328,10 +406,10 @@
             items[idx].className = '';
             idx += 1;
             items[idx].className = 'latest';
-            endsAt += perClue;
+            endsAt += durationOf(idx);
             remaining = endsAt - Date.now();
           } else {
-            // Nobody got it: show the answer 15 seconds after the last clue.
+            // Nobody got it: show the answer once the last clue's time runs out.
             finish('revealed');
             worth.textContent = 'Not guessed · 0 pts';
             worth.classList.add('zero');
@@ -376,7 +454,7 @@
       render();
       ctx.onShown.push(() => {
         phase = 'running';
-        endsAt = Date.now() + perClue;
+        endsAt = Date.now() + durationOf(0);
         timer = setInterval(tick, 100);
         render();
       });
@@ -384,6 +462,54 @@
       ctx.focusOnShow = pauseBtn;
     },
   };
+
+  // A "Buzzed" button for the host's assistant: starts a short countdown for the
+  // team that buzzed. It never touches the tile itself. Pressing it again
+  // (another team buzzes) starts the countdown over.
+  function addBuzzTimer(ctx) {
+    const total = (ctx.cfg.answerSeconds || 15) * 1000;
+    const btn = button(`Buzzed · ${total / 1000}s`, 'buzz-btn', start, 'timer');
+    ctx.actions.append(btn);
+    let endsAt = 0;
+    let timer = null;
+    let resetTimer = null;
+
+    function start() {
+      clearInterval(timer);
+      clearTimeout(resetTimer);
+      endsAt = Date.now() + total;
+      btn.classList.remove('done');
+      btn.classList.add('running');
+      timer = setInterval(tick, 100);
+      tick();
+    }
+
+    function tick() {
+      const left = endsAt - Date.now();
+      if (left <= 0) {
+        clearInterval(timer);
+        btn.classList.remove('running', 'urgent');
+        btn.classList.add('done');
+        setLabel(btn, "Time's up!");
+        beep();
+        resetTimer = setTimeout(reset, 3000);
+        return;
+      }
+      btn.classList.toggle('urgent', left <= 5000);
+      setLabel(btn, `Answer · ${Math.ceil(left / 1000)}`);
+    }
+
+    function reset() {
+      btn.classList.remove('running', 'urgent', 'done');
+      setLabel(btn, `Buzzed · ${total / 1000}s`);
+    }
+
+    ctx.buzz = start;
+    ctx.cleanups.push(() => {
+      clearInterval(timer);
+      clearTimeout(resetTimer);
+    });
+  }
 
   // Adds the answer area and a Reveal Answer button. Returns a function that reveals it.
   function addReveal(ctx, answer, image, onReveal) {
@@ -469,6 +595,8 @@
 
     const onKey = (e) => {
       if (e.key === 'Escape' && !document.querySelector('dialog[open]')) close();
+      // B starts the 15-second answer timer, so an assistant can react fast.
+      if ((e.key === 'b' || e.key === 'B') && !e.repeat && ctx.buzz) ctx.buzz();
     };
     document.addEventListener('keydown', onKey);
 

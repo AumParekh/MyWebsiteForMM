@@ -403,7 +403,7 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 }
 
 /* Fetch the Object */
-.body-fetch { grid-template-rows: minmax(0, 1fr) auto; }
+.body-fetch { grid-template-rows: auto minmax(0, 1fr) auto; }
 /* The image is pinned to the figure's box so a large photo can never grow
    past the screen and cover the buttons. */
 .fetch-fig { position: relative; margin: 0; min-height: 0; display: grid; place-items: center; }
@@ -440,7 +440,9 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
   gap: clamp(10px, 2.4vmin, 32px);
   text-align: center;
 }
-.hook-prompt {
+/* Instruction line shown on a tile (Aaja Nachle, Jagga Jasoos). */
+.tile-prompt {
+  justify-self: center;
   max-width: 24em;
   margin: 0;
   padding: 0.5em 1em;
@@ -449,8 +451,10 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
   background: rgba(0, 0, 0, 0.22);
   color: var(--ink);
   font: 700 clamp(18px, 4.6vmin, 66px)/1.2 var(--font-body);
+  text-align: center;
   text-wrap: balance;
 }
+.body-fetch .tile-prompt { font-size: clamp(16px, 3.6vmin, 52px); }
 .hook-icon { position: relative; color: var(--gold); }
 .hook-icon svg { display: block; width: clamp(56px, 18vmin, 250px); height: auto; filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5)); }
 .hook-stage.playing .hook-icon svg { animation: bob 0.9s ease-in-out infinite; }
@@ -476,6 +480,29 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 }
 .hook-status { margin: 0; color: var(--ink-soft); font: 700 clamp(15px, 2.8vmin, 38px)/1.2 var(--font-head); letter-spacing: 0.06em; text-transform: uppercase; }
 .hook-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(6px, 1.4vmin, 18px); }
+
+/* Picture Abhi Baaki Hai: tile timer */
+.body-movie { grid-template-rows: auto minmax(0, 1fr) auto; }
+.movie-status {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(4px, 1vmin, 14px) clamp(8px, 2vmin, 28px);
+  font-family: var(--font-head);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.movie-status .countdown-num { min-width: 2.6em; }
+.movie-status.urgent .countdown-num { color: #ff8a8a; animation: blink 1s steps(2) infinite; }
+.movie-status.urgent .timer-bar span { background: #ff8a8a; }
+.movie-status.stopped .countdown-label { color: var(--gold); }
+
+/* Answer timer button: turns into the countdown while it runs. */
+.buzz-btn { min-width: 9.5em; font-variant-numeric: tabular-nums; }
+.buzz-btn.running { background: #fff; border-color: #fff; color: var(--tile-2); }
+.buzz-btn.running:hover { background: #e8ebff; }
+.buzz-btn.urgent { background: #ff5c5c; border-color: #ff5c5c; color: #fff; animation: blink 0.5s steps(2) infinite; }
+.buzz-btn.done { background: #ff5c5c; border-color: #ff5c5c; color: #fff; }
 
 /* Guess the Character */
 .body-character { grid-template-rows: auto minmax(0, 1fr) auto; }
