@@ -723,7 +723,7 @@
 
         // Demos use the same tile view but never touch the saved board state.
         const demoCfg = Object.assign({}, content, {
-          characterSecondsPerClue: demo.characterSecondsPerClue || 5,
+          characterSecondsPerClue: demo.characterSecondsPerClue || content.characterSecondsPerClue,
         });
         document.querySelectorAll('[data-demo]').forEach((btn) => {
           // A category can have several demo tiles; each click shows the next one.

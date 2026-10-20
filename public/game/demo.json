@@ -2,9 +2,9 @@
   "_howToEdit": [
     "Sample tiles for the Try Demo buttons on the How to Play page. They never affect the real board.",
     "\"row\" sets which value the demo tile shows (0 = 10 points, 2 = 30 points, and so on).",
-    "A category can have a list of demo tiles: each Try Demo click shows the next one."
+    "A category can have a list of demo tiles: each Try Demo click shows the next one.",
+    "Demo timers match the real game (set in content.json). To speed up the Main Kaun? demo, add \"characterSecondsPerClue\": 5 here."
   ],
-  "characterSecondsPerClue": 5,
   "tiles": {
     "word": [
       {
