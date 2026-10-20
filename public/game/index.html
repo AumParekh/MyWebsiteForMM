@@ -7,7 +7,58 @@
     <title>Game</title>
     <style>
       html, body { margin: 0; height: 100%; background: #fff; }
+      body { font-family: system-ui, -apple-system, sans-serif; }
+      #gate {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #gate form { display: flex; flex-direction: column; gap: 10px; width: 240px; }
+      #gate input, #gate button {
+        font: inherit;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      #gate button { background: #111; color: #fff; border-color: #111; cursor: pointer; }
+      #error { color: #c00; font-size: 14px; min-height: 1em; margin: 0; }
+      #game { display: none; height: 100%; }
     </style>
   </head>
-  <body></body>
+  <body>
+    <div id="gate">
+      <form id="key-form">
+        <input id="key" type="password" placeholder="Enter key" autocomplete="off" autofocus />
+        <button type="submit">Enter</button>
+        <p id="error"></p>
+      </form>
+    </div>
+    <div id="game"></div>
+
+    <script>
+      // Simple key gate, not real security: the key is visible in this file.
+      var KEY = 'game2025';
+      var STORAGE = 'game-unlocked';
+
+      function unlock() {
+        document.getElementById('gate').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
+      }
+
+      try {
+        if (localStorage.getItem(STORAGE) === '1') unlock();
+      } catch (e) {}
+
+      document.getElementById('key-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (document.getElementById('key').value === KEY) {
+          try { localStorage.setItem(STORAGE, '1'); } catch (e) {}
+          unlock();
+        } else {
+          document.getElementById('error').textContent = 'Wrong key';
+        }
+      });
+    </script>
+  </body>
 </html>
