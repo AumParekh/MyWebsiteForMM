@@ -508,6 +508,20 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 .buzz-btn.done { background: #ff5c5c; border-color: #ff5c5c; color: #fff; }
 .buzz-reset { padding-inline: 1em; }
 
+/* Keyboard shortcut badge on a button (hidden on touch screens, which have no keyboard). */
+.key-hint {
+  margin-left: 0.15em;
+  padding: 0.18em 0.4em;
+  border: 1.5px solid currentColor;
+  border-radius: 0.3em;
+  font: 700 0.72em/1 var(--font-head);
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+@media (hover: none) {
+  .key-hint { display: none; }
+}
+
 /* Guess the Character */
 .body-character { grid-template-rows: auto minmax(0, 1fr) auto; }
 .char-status {

@@ -39,9 +39,11 @@
     return span;
   }
 
-  function button(label, cls, onclick, iconName) {
-    return el('button', { type: 'button', class: `btn ${cls || ''}`, onclick },
-      iconName && icon(iconName), el('span', { class: 'label' }, label));
+  // key: optional keyboard shortcut, shown as a small badge on the button.
+  function button(label, cls, onclick, iconName, key) {
+    return el('button', { type: 'button', class: `btn ${cls || ''}`, onclick, title: key && `Shortcut: ${key}` },
+      iconName && icon(iconName), el('span', { class: 'label' }, label),
+      key && el('kbd', { class: 'key-hint', 'aria-hidden': 'true' }, key));
   }
 
   function setLabel(btn, text) {
@@ -510,10 +512,8 @@
   // to pause its clue timer while a team answers).
   function addBuzzTimer(ctx, hooks = {}) {
     const total = (ctx.cfg.answerSeconds || 15) * 1000;
-    const btn = button(`Buzzed · ${total / 1000}s`, 'buzz-btn', start, 'timer');
-    const resetBtn = button('Reset', 'buzz-reset', reset, 'restart');
-    btn.title = 'Shortcut: B';
-    resetBtn.title = 'Shortcut: R';
+    const btn = button(`Buzzed · ${total / 1000}s`, 'buzz-btn', start, 'timer', 'B');
+    const resetBtn = button('Reset', 'buzz-reset', reset, 'restart', 'R');
     resetBtn.disabled = true;
     ctx.actions.append(btn, resetBtn);
     let endsAt = 0;
@@ -644,7 +644,7 @@
       actions);
 
     const ctx = { category, tile, cfg, body, actions, back, cleanups: [], onShown: [], focusOnShow: null };
-    const backBtn = button(demo ? 'Close Demo' : 'Back to Board', '', close);
+    const backBtn = button(demo ? 'Close Demo' : 'Back to Board', '', close, null, 'Esc');
     actions.append(backBtn);
     builders[type](ctx);
 
