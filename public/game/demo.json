@@ -9,13 +9,23 @@
     "word": [
       {
         "row": 0,
-        "clue": "Cilla turns into a shade of purple (5)",
-        "answer": "Lilac"
+        "clue": "Cricket gear, Flying mammal (3)",
+        "answer": "Bat"
       },
       {
         "row": 0,
-        "clue": "Daisy loses last lily, laboriously leads to subsidies (4)",
-        "answer": "Aids"
+        "clue": "Bird, Zero runs (4)",
+        "answer": "Duck"
+      },
+      {
+        "row": 0,
+        "clue": "Sales talk, Cricket ground (5)",
+        "answer": "Pitch"
+      },
+      {
+        "row": 0,
+        "clue": "Season, Jump (6)",
+        "answer": "Spring"
       }
     ],
     "movie": {

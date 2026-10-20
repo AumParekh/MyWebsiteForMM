@@ -7,7 +7,7 @@
     "Fetch: \"caption\" is optional text shown under the picture. Hook Step: the song loops between \"start\" and \"end\" (minutes:seconds) until Stop is pressed; leave both as \"\" to loop the whole song. \"answer\" is optional; if filled in, a Reveal Answer button shows it.",
     "Character: exactly 5 clues, from hardest to easiest. \"image\" is optional (leave it as \"\" for none).",
     "Demo tiles on the How to Play page live in demo.json, not here.",
-    "Timers: characterSecondsPerClue is how long each Main Kaun? clue stays (first clue, then each later one). wordSeconds and movieSeconds are how long a Cryptic Crossy or Picture Abhi Baaki Hai tile stays open before the answer shows. answerSeconds is the Buzzed answer timer.",
+    "Timers: characterSecondsPerClue is how long each Main Kaun? clue stays (first clue, then each later one). wordSeconds and movieSeconds are how long a Judwaa or Picture Abhi Baaki Hai tile stays open before the answer shows. answerSeconds is the Buzzed answer timer.",
     "A \"prompt\" can be one line or a list of lines; the first line is the headline. Aaja Nachle also adds the clip length automatically."
   ],
   "title": "Game Board",
@@ -45,28 +45,28 @@
   "categories": [
     {
       "type": "word",
-      "name": "Cryptic Crossy",
-      "short": "Crossy",
+      "name": "Judwaa",
+      "short": "Judwaa",
       "tiles": [
         {
-          "clue": "Dirty room organized is where students sleep (9)",
-          "answer": "Dormitory"
+          "clue": "Fish, Instrument (4)",
+          "answer": "Bass"
         },
         {
-          "clue": "Chased around, turned a cheque into money (6)",
-          "answer": "Cashed"
+          "clue": "Just, Event (4)",
+          "answer": "Fair"
         },
         {
-          "clue": "War or destruction is killer (5)",
-          "answer": "Arrow"
+          "clue": "Small, Time (6)",
+          "answer": "Minute"
         },
         {
-          "clue": "Broken plate shows part of a rose (5)",
-          "answer": "Petal"
+          "clue": "Parasite, Stroke of luck (5)",
+          "answer": "Fluke"
         },
         {
-          "clue": "Star Wars suffered COVID loss, violently leads to unwanted growth (4)",
-          "answer": "Wart"
+          "clue": "Fall, Note (4)",
+          "answer": "Slip"
         }
       ]
     },

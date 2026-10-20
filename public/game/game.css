@@ -483,7 +483,7 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 .hook-status { margin: 0; color: var(--ink-soft); font: 700 clamp(15px, 2.8vmin, 38px)/1.2 var(--font-head); letter-spacing: 0.06em; text-transform: uppercase; }
 .hook-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(6px, 1.4vmin, 18px); }
 
-/* Cryptic Crossy / Picture Abhi Baaki Hai: tile timer */
+/* Judwaa / Picture Abhi Baaki Hai: tile timer */
 .body-word,
 .body-movie { grid-template-rows: auto minmax(0, 1fr) auto; }
 .tile-timer {
