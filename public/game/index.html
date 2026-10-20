@@ -4,61 +4,120 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Game</title>
-    <style>
-      html, body { margin: 0; height: 100%; background: #fff; }
-      body { font-family: system-ui, -apple-system, sans-serif; }
-      #gate {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      #gate form { display: flex; flex-direction: column; gap: 10px; width: 240px; }
-      #gate input, #gate button {
-        font: inherit;
-        padding: 10px 12px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-      }
-      #gate button { background: #111; color: #fff; border-color: #111; cursor: pointer; }
-      #error { color: #c00; font-size: 14px; min-height: 1em; margin: 0; }
-      #game { display: none; height: 100%; }
-    </style>
+    <meta name="theme-color" content="#050824" />
+    <title>How to Play</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="game.css" />
+    <script src="gate.js"></script>
   </head>
-  <body>
-    <div id="gate">
-      <form id="key-form">
-        <input id="key" type="password" placeholder="Enter key" autocomplete="off" autofocus />
-        <button type="submit">Enter</button>
-        <p id="error"></p>
-      </form>
-    </div>
-    <div id="game"></div>
+  <body data-page="intro" class="intro-page">
+    <header class="intro-top">
+      <span class="brand" data-title>Game Board</span>
+      <a class="btn primary" href="board.html">Start Game</a>
+    </header>
 
-    <script>
-      // Simple key gate, not real security: the key is visible in this file.
-      var KEY = 'game2025';
-      var STORAGE = 'game-unlocked';
+    <main class="intro">
+      <section class="hero" id="welcome">
+        <p class="eyebrow">Welcome</p>
+        <h1 data-title>Game Board</h1>
+        <p class="lead">
+          Five categories. Twenty-five tiles. One board. Teams take turns picking a tile, and whatever's behind it
+          decides how you win. Some tiles test what you know, some test how fast you think, and some test how fast
+          you run.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary big" href="board.html">Start Game</a>
+          <a class="btn big" href="#categories">See the categories</a>
+        </div>
+        <p class="missing" id="load-error" hidden></p>
+      </section>
 
-      function unlock() {
-        document.getElementById('gate').style.display = 'none';
-        document.getElementById('game').style.display = 'block';
-      }
+      <section id="how">
+        <h2>How the Board Works</h2>
+        <div class="split">
+          <p>
+            The board has 5 categories across the top. Each category has 5 tiles, worth 10 to 50 points. Harder
+            tiles are worth more. Once a tile is played it greys out, so you always know what's left.
+          </p>
+          <div>
+            <div class="mini-grid" id="mini-grid" aria-hidden="true"></div>
+            <div class="mini-legend"><span>Still to play</span><span class="is-played">Already played</span></div>
+          </div>
+        </div>
+      </section>
 
-      try {
-        if (localStorage.getItem(STORAGE) === '1') unlock();
-      } catch (e) {}
+      <section id="rules">
+        <h2>Buzzer Rules</h2>
+        <ul class="rules">
+          <li>When a clue appears, buzz in if you know the answer.</li>
+          <li>The first team to buzz gets to answer.</li>
+          <li class="key">
+            <strong>One buzz per team per tile.</strong> Once your team buzzes, you've used your chance on that tile,
+            whether you're right or wrong.
+          </li>
+          <li>If you get it wrong, the other teams can still buzz.</li>
+          <li>The host's decision is final.</li>
+        </ul>
+      </section>
 
-      document.getElementById('key-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (document.getElementById('key').value === KEY) {
-          try { localStorage.setItem(STORAGE, '1'); } catch (e) {}
-          unlock();
-        } else {
-          document.getElementById('error').textContent = 'Wrong key';
-        }
-      });
-    </script>
+      <section id="categories">
+        <h2>The Categories</h2>
+        <div class="cat-cards">
+          <article class="cat-card">
+            <div class="cat-card-top"><span class="cat-num">1</span><span class="tag">Buzzer</span></div>
+            <h3>Guess the Word</h3>
+            <p>A cryptic clue appears on screen. The answer is always a single word. Crack it, buzz, and answer.</p>
+            <button class="btn" type="button" data-demo="word" data-name="Guess the Word">Try Demo</button>
+          </article>
+          <article class="cat-card">
+            <div class="cat-card-top"><span class="cat-num">2</span><span class="tag">Buzzer</span></div>
+            <h3>Guess the Movie from the Plot</h3>
+            <p>
+              A movie's plot appears on screen, without the title. Read it, figure out the movie, and buzz before
+              anyone else.
+            </p>
+            <button class="btn" type="button" data-demo="movie" data-name="Guess the Movie from the Plot">Try Demo</button>
+          </article>
+          <article class="cat-card">
+            <div class="cat-card-top"><span class="cat-num">3</span><span class="tag alt">No buzzer</span></div>
+            <h3>Fetch the Object</h3>
+            <p>
+              No buzzers here. A tile flips to show an object. The first team to physically bring that object to the
+              host wins the points. Run.
+            </p>
+            <button class="btn" type="button" data-demo="fetch" data-name="Fetch the Object">Try Demo</button>
+          </article>
+          <article class="cat-card">
+            <div class="cat-card-top"><span class="cat-num">4</span><span class="tag">Buzzer</span></div>
+            <h3>Hook Step</h3>
+            <p>A song starts playing. Buzz in and show the host the song's signature hook step. The host decides who nailed it.</p>
+            <button class="btn" type="button" data-demo="hook" data-name="Hook Step">Try Demo</button>
+          </article>
+          <article class="cat-card">
+            <div class="cat-card-top"><span class="cat-num">5</span><span class="tag">Buzzer · Timed</span></div>
+            <h3>Guess the Character</h3>
+            <p>
+              These tiles are numbered 1 to 5 instead of showing points. Clues appear one at a time, every 15 seconds.
+              The sooner you guess, the more you score: 50 points on the first clue, down to 10 on the last. You
+              still only get one buzz per tile, so don't guess too early.
+            </p>
+            <button class="btn" type="button" data-demo="character" data-name="Guess the Character">Try Demo</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="ready">
+        <h2>Ready?</h2>
+        <a class="btn primary" href="board.html">Start Game</a>
+      </section>
+    </main>
+
+    <script src="game.js"></script>
   </body>
 </html>

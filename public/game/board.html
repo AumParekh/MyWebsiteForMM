@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#050824" />
+    <title>Game Board</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="game.css" />
+    <script src="gate.js"></script>
+  </head>
+  <body data-page="board" class="board-page">
+    <header class="topbar">
+      <h1 data-title>Game Board</h1>
+      <nav class="toplinks">
+        <button class="link-btn" id="fullscreen" type="button" hidden>Full screen</button>
+        <a class="link-btn" href="./">How to Play</a>
+      </nav>
+    </header>
+
+    <main class="board" id="board" aria-label="Game board"></main>
+
+    <footer class="board-foot">
+      <button class="reset-btn" id="reset" type="button">Reset board</button>
+    </footer>
+
+    <script src="game.js"></script>
+  </body>
+</html>
