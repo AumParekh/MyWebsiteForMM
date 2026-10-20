@@ -339,6 +339,7 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 
 .card-body {
   min-height: 0;
+  overflow: hidden;
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
   gap: clamp(8px, 2vmin, 28px);
@@ -403,13 +404,15 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 
 /* Fetch the Object */
 .body-fetch { grid-template-rows: minmax(0, 1fr) auto; }
-.fetch-fig { margin: 0; min-height: 0; display: grid; place-items: center; }
+/* The image is pinned to the figure's box so a large photo can never grow
+   past the screen and cover the buttons. */
+.fetch-fig { position: relative; margin: 0; min-height: 0; display: grid; place-items: center; }
 .fetch-fig img {
-  max-width: 100%;
-  max-height: 100%;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  border-radius: var(--radius);
-  filter: drop-shadow(0 16px 40px rgba(0, 0, 0, 0.45));
 }
 .fetch-caption {
   margin: 0;
