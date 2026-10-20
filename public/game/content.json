@@ -7,7 +7,8 @@
     "Fetch: \"caption\" is optional text shown under the picture. Hook Step: the song loops between \"start\" and \"end\" (minutes:seconds) until Stop is pressed; leave both as \"\" to loop the whole song. \"answer\" is optional; if filled in, a Reveal Answer button shows it.",
     "Character: exactly 5 clues, from hardest to easiest. \"image\" is optional (leave it as \"\" for none).",
     "Demo tiles on the How to Play page live in demo.json, not here.",
-    "Timers: characterSecondsPerClue is how long each Main Kaun? clue stays (first clue, then each later one). movieSeconds is how long a Picture Abhi Baaki Hai tile stays open before the answer shows. answerSeconds is the Buzzed answer timer."
+    "Timers: characterSecondsPerClue is how long each Main Kaun? clue stays (first clue, then each later one). wordSeconds and movieSeconds are how long a Cryptic Crossy or Picture Abhi Baaki Hai tile stays open before the answer shows. answerSeconds is the Buzzed answer timer.",
+    "A \"prompt\" can be one line or a list of lines; the first line is the headline. Aaja Nachle also adds the clip length automatically."
   ],
   "title": "Game Board",
   "rowLabels": [
@@ -38,6 +39,7 @@
     30,
     30
   ],
+  "wordSeconds": 180,
   "movieSeconds": 180,
   "answerSeconds": 15,
   "categories": [
@@ -127,7 +129,10 @@
       "type": "hook",
       "name": "Aaja Nachle",
       "short": "Nachle",
-      "prompt": "Every team, send up one player who hasn't come up yet in this game.",
+      "prompt": [
+        "Every team, send up one player who hasn't come up yet in this game.",
+        "You'll be judged on how well you dance, how quickly you pick up the step, and whether you keep dancing for the entire clip."
+      ],
       "tiles": [
         {
           "audio": "hook-1.mp3",
