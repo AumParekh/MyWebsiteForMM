@@ -60,6 +60,14 @@
     return ASSETS + name;
   }
 
+  // "1:24" -> 84 seconds. Plain numbers are taken as seconds.
+  function parseTime(value) {
+    if (value == null || value === '') return null;
+    const parts = String(value).split(':').map(Number);
+    if (parts.some(isNaN)) return null;
+    return parts.reduce((total, part) => total * 60 + part, 0);
+  }
+
   function tileLabel(category, row, cfg) {
     return category.type === 'character' ? String(row + 1) : String(cfg.values[row]);
   }
@@ -190,30 +198,45 @@
       audio.preload = 'auto';
       audio.src = src;
 
+      // The song loops between start and end until Stop. With no end set,
+      // the whole song loops.
+      const start = parseTime(ctx.tile.start) || 0;
+      const end = parseTime(ctx.tile.end) || Infinity;
+      audio.loop = end === Infinity;
+      const loopWatch = setInterval(() => {
+        if (!audio.paused && audio.currentTime >= end) audio.currentTime = start;
+      }, 30);
+      const toStart = () => {
+        if (audio.currentTime < start || audio.currentTime >= end) audio.currentTime = start;
+      };
+
       const noteIcon = el('div', { class: 'hook-icon', 'aria-hidden': 'true' });
       noteIcon.innerHTML = '<svg viewBox="0 0 64 64" fill="currentColor"><path d="M23 12.5 55 4v37.5a8.5 8.5 0 1 1-5-7.75V16.6l-22 5.85V49.5a8.5 8.5 0 1 1-5-7.75z"/></svg>';
       const eq = el('div', { class: 'eq', 'aria-hidden': 'true' }, [1, 2, 3, 4, 5].map(() => el('span')));
       const status = el('p', { class: 'hook-status', 'aria-live': 'polite' }, 'Press play to start the song');
 
       const play = button('Play', 'primary big', () => {
+        toStart();
         audio.play().catch(() => { status.textContent = `Could not play ${src}`; });
       }, 'play');
       const pause = button('Pause', 'big', () => audio.pause(), 'pause');
       const restart = button('Restart', 'big', () => {
-        audio.currentTime = 0;
+        audio.currentTime = start;
         audio.play().catch(() => {});
       }, 'restart');
       const stop = button('Stop', 'big', () => {
-        audio.pause();
-        audio.currentTime = 0;
         setState('stopped');
+        audio.pause();
+        audio.currentTime = start;
       }, 'stop');
 
       const stage = el('div', { class: 'hook-stage' }, noteIcon, eq, status,
         el('div', { class: 'hook-controls' }, play, pause, restart, stop));
       ctx.body.append(stage);
 
-      function setState(state) {
+      let state;
+      function setState(next) {
+        state = next;
         stage.classList.toggle('playing', state === 'playing');
         play.disabled = state === 'playing' || state === 'error';
         pause.disabled = state !== 'playing';
@@ -227,8 +250,7 @@
       status.textContent = 'Press play to start the song';
 
       audio.addEventListener('playing', () => setState('playing'));
-      audio.addEventListener('pause', () => { if (audio.currentTime > 0 && !audio.ended) setState('paused'); });
-      audio.addEventListener('ended', () => { setState('stopped'); status.textContent = 'Song finished'; });
+      audio.addEventListener('pause', () => { if (state === 'playing') setState('paused'); });
       audio.addEventListener('error', () => {
         setState('error');
         status.textContent = `Audio file not found: ${src}`;
@@ -236,6 +258,7 @@
 
       // Audio stops automatically when going back to the board.
       ctx.cleanups.push(() => {
+        clearInterval(loopWatch);
         audio.pause();
         audio.removeAttribute('src');
         audio.load();

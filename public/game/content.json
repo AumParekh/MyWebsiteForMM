@@ -3,14 +3,32 @@
     "This file holds all the real game content. Edit the text, save, and push. No code changes needed.",
     "Each category has exactly 5 tiles, in row order from top (row 1) to bottom (row 5).",
     "Image and MP3 file names refer to files in the assets folder, for example \"fetch-1.jpg\" means assets/fetch-1.jpg.",
-    "Fetch: \"caption\" is optional text shown under the picture. Hook Step: \"answer\" is optional; if filled in, a Reveal Answer button shows the song name.",
+    "Fetch: \"caption\" is optional text shown under the picture. Hook Step: the song loops between \"start\" and \"end\" (minutes:seconds) until Stop is pressed; leave both as \"\" to loop the whole song. \"answer\" is optional; if filled in, a Reveal Answer button shows it.",
     "Character: exactly 5 clues, from hardest to easiest. \"image\" is optional (leave it as \"\" for none).",
     "Demo tiles on the How to Play page live in demo.json, not here."
   ],
   "title": "Game Board",
-  "rowLabels": ["1", "2", "3", "4", "5"],
-  "values": [10, 20, 30, 40, 50],
-  "characterPoints": [50, 40, 30, 20, 10],
+  "rowLabels": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "values": [
+    10,
+    20,
+    30,
+    40,
+    50
+  ],
+  "characterPoints": [
+    50,
+    40,
+    30,
+    20,
+    10
+  ],
   "characterSecondsPerClue": 15,
   "categories": [
     {
@@ -18,11 +36,26 @@
       "name": "Guess the Word",
       "short": "Word",
       "tiles": [
-        { "clue": "Listen, rearranged, is quiet (6)", "answer": "Silent" },
-        { "clue": "Some grape arrangement hides a fruit (4)", "answer": "Pear" },
-        { "clue": "Friend and top card make a royal home (6)", "answer": "Palace" },
-        { "clue": "Rose, perhaps, sounds like a baking ingredient (6)", "answer": "Flower" },
-        { "clue": "Stressed? Turn it around for something sweet (8)", "answer": "Desserts" }
+        {
+          "clue": "Listen, rearranged, is quiet (6)",
+          "answer": "Silent"
+        },
+        {
+          "clue": "Some grape arrangement hides a fruit (4)",
+          "answer": "Pear"
+        },
+        {
+          "clue": "Friend and top card make a royal home (6)",
+          "answer": "Palace"
+        },
+        {
+          "clue": "Rose, perhaps, sounds like a baking ingredient (6)",
+          "answer": "Flower"
+        },
+        {
+          "clue": "Stressed? Turn it around for something sweet (8)",
+          "answer": "Desserts"
+        }
       ]
     },
     {
@@ -31,24 +64,24 @@
       "short": "Movie",
       "tiles": [
         {
-          "plot": "A penniless young artist wins a ticket aboard a luxury ocean liner in a lucky card game, just minutes before it sets sail. On board, he meets a wealthy young woman who is being pushed into marrying a rich, arrogant man she does not love. He saves her one night when she is about to make a terrible decision at the back of the ship. The two fall deeply in love, sneaking away to dance below deck, and he draws a famous charcoal portrait of her. Her fiancé discovers the affair and frames the artist for theft. Then disaster strikes: the ship hits an iceberg in the North Atlantic. As the 'unsinkable' ship slowly goes down, the lovers fight to survive the freezing night, and only one of them lives to tell the story decades later.",
-          "answer": "Titanic"
+          "plot": "A reserved office clerk, whose marriage is devoid of affection, assumes a flamboyant disguise to participate in a dance competition alongside his unsuspecting wife. While she becomes captivated by his boisterous alter ego, she remains oblivious to the fact that the two men competing for her affection are, in reality, one and the same person. His elaborate deception soon forces him to confront whether love can flourish without being recognised for who he truly is.",
+          "answer": "Rab Ne Bana Di Jodi"
         },
         {
-          "plot": "Two friends set off on a road trip to find a college classmate who vanished without a trace after graduation. Through flashbacks, we see how that classmate turned their life at a top engineering college upside down. He questioned everything, mocked rote learning, and openly challenged the strict, stopwatch-obsessed director of the institute. He built clever gadgets, helped deliver a baby during a storm using a vacuum cleaner, and kept telling everyone to calm their hearts in a crisis. Meanwhile, one friend secretly dreams of becoming a wildlife photographer, and the other battles fear and poverty at home. The search finally leads them to a beautiful lake in the mountains, where they discover that the friend they knew was hiding a very different name.",
-          "answer": "3 Idiots"
+          "plot": "A prominent industrialist’s insistence on familial tradition leads him to sever ties with his eldest son, whose choice of life partner defies the household’s expectations. The ensuing estrangement spans continents, leaving the younger heir to devise an elaborate reconciliation without revealing his true intentions. As the family’s younger generation grows up amid unresolved grievances, a carefully orchestrated reunion forces the patriarch to confront the consequences of his own inflexibility.",
+          "answer": "Kabhi Khushi Kabhie Gham"
         },
         {
-          "plot": "A skilled thief does not steal money or jewels. He steals secrets from people's minds while they sleep. Wanted for a crime he did not commit, he cannot return home to his children. A powerful businessman offers him a way back, but the job is nearly impossible: instead of stealing an idea, his team must plant one in the mind of a young heir. He assembles a crew, including a forger, a chemist, and a young architecture student who designs mazes. They go deeper and deeper, into a dream inside a dream inside a dream, where time slows down at every level. But the thief is haunted by the memory of his late wife, who keeps sabotaging the mission. In the end, a small spinning top on a table leaves the audience wondering whether he is still dreaming.",
-          "answer": "Inception"
+          "plot": "A landlord perpetually struggles to collect rent from two financially inept tenants, one of whom operates a failing garage while the other survives on precarious odd jobs. Their fortunes appear to change when a telephone operator accidentally connects them to a kidnapping negotiation involving a wealthy industrialist’s abducted granddaughter. Instead of alerting the authorities, the trio decide to impersonate the kidnappers and demand a share of the ransom. Their scheme spirals into chaos when the original abductors grow suspicious, a ransom exchange becomes increasingly complicated, and an innocent family’s desperation collides with the trio’s greed and incompetence.",
+          "answer": "Hera Pheri"
         },
         {
-          "plot": "Three childhood friends reunite for a bachelor trip before one of them gets married. Years ago they promised each other this trip, and agreed that each friend would choose one dangerous adventure that the other two must also try, no questions asked. The groom is nervous about his controlling fiancée. One friend is a workaholic who cannot put down his phone. The third is a joker who has just learned a secret about the father he never met. Along the way they fall out, make up, meet a free-spirited diving instructor, and slowly face the fears they have been running from. They dive deep underwater, jump out of a plane, and finally run with the bulls through the streets of Pamplona in Spain.",
-          "answer": "Zindagi Na Milegi Dobara"
+          "plot": "A notorious con artist impersonates a celebrated filmmaker to persuade an unsuspecting village to participate in an elaborate cinematic deception. His actual objective, however, is to intercept a heavily guarded consignment of priceless diamonds aboard a moving train. With an ambitious actress, a gullible village, and an international film crew unknowingly caught in his scheme, he orchestrates an audacious spectacle in which fiction becomes the perfect disguise for a criminal enterprise.",
+          "answer": "Tees Maar Khan"
         },
         {
-          "plot": "A cheerful insurance salesman lives in a perfect seaside town where the sun always shines and the neighbours always smile. He has a loving wife, a best friend he has known since childhood, and a life he never questions. But strange things keep happening. A stage light falls out of a clear blue sky. A car radio seems to describe exactly where he is driving. His wife keeps talking about kitchen products as if she were in an advert. He is terrified of water because his father drowned when he was a boy, so he has never left the island. Slowly he realises that everyone around him may be acting. When he finally sails out to sea, he discovers the shocking truth about the world he has lived in for thirty years.",
-          "answer": "The Truman Show"
+          "plot": "A perpetually unemployed young man establishes an unconventional organisation dedicated to facilitating romantic unions, despite being spectacularly inept at resolving the complications of his own heart. His life takes an unexpected turn when he becomes enamoured with a young woman whose affections are irrevocably directed towards an expatriate she encountered overseas. Suppressing his own romantic inclinations, he undertakes the rather ill-advised mission of reuniting the two, only to become entangled in a labyrinth of mistaken identities, an influential father’s opposition, a botched abduction, and the machinations of a local criminal syndicate. As his self-appointed role as a benevolent matchmaker spirals into absurdity, he must confront the possibility that facilitating another man’s happiness may come at the expense of his own.",
+          "answer": "Ajab Prem Ki Ghazab Kahani"
         }
       ]
     },
@@ -57,11 +90,26 @@
       "name": "Fetch the Object",
       "short": "Fetch",
       "tiles": [
-        { "image": "fetch-1.jpg", "caption": "" },
-        { "image": "fetch-2.jpg", "caption": "" },
-        { "image": "fetch-3.jpg", "caption": "" },
-        { "image": "fetch-4.jpg", "caption": "" },
-        { "image": "fetch-5.jpg", "caption": "" }
+        {
+          "image": "fetch-1.jpg",
+          "caption": ""
+        },
+        {
+          "image": "fetch-2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "fetch-3.jpg",
+          "caption": ""
+        },
+        {
+          "image": "fetch-4.jpg",
+          "caption": ""
+        },
+        {
+          "image": "fetch-5.jpg",
+          "caption": ""
+        }
       ]
     },
     {
@@ -69,11 +117,36 @@
       "name": "Hook Step",
       "short": "Hook Step",
       "tiles": [
-        { "audio": "hook-1.mp3", "answer": "" },
-        { "audio": "hook-2.mp3", "answer": "" },
-        { "audio": "hook-3.mp3", "answer": "" },
-        { "audio": "hook-4.mp3", "answer": "" },
-        { "audio": "hook-5.mp3", "answer": "" }
+        {
+          "audio": "hook-1.mp3",
+          "start": "0:47",
+          "end": "1:11",
+          "answer": ""
+        },
+        {
+          "audio": "hook-2.mp3",
+          "start": "0:46",
+          "end": "1:48",
+          "answer": ""
+        },
+        {
+          "audio": "hook-3.mp3",
+          "start": "1:21",
+          "end": "1:52",
+          "answer": ""
+        },
+        {
+          "audio": "hook-4.mp3",
+          "start": "0:30",
+          "end": "1:24",
+          "answer": ""
+        },
+        {
+          "audio": "hook-5.mp3",
+          "start": "0:32",
+          "end": "1:13",
+          "answer": ""
+        }
       ]
     },
     {
