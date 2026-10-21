@@ -617,8 +617,8 @@
     return reveal;
   }
 
-  // intro: optional step run on the front of the card before it turns over
-  // (the Jagga Jasoos countdown). It calls back when it is done.
+  // intro: optional step run on the front of the card before it opens
+  // (the 3, 2, 1 countdown). It calls back when it is done.
   function animateIn(card, source, done, intro) {
     const flip = card.classList.contains('mode-flip');
     const show = () => {
@@ -686,8 +686,9 @@
     };
     document.addEventListener('keydown', onKey);
 
-    // Jagga Jasoos tiles count teams in before the object is shown.
-    const intro = type === 'fetch' && cfg.fetchCountdown !== false ? (then) => countdown(front, then) : null;
+    // Every tile counts the room in ("Are you ready? 3, 2, 1, GO!") before it
+    // opens; the tile's own timers start after GO.
+    const intro = cfg.countdown !== false ? (then) => countdown(front, then) : null;
     animateIn(card, opts.source, () => {
       if (!overlay.isConnected) return;
       ctx.onShown.forEach((fn) => fn());
