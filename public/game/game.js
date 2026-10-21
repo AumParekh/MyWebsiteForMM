@@ -465,8 +465,67 @@
   // lines are shown smaller underneath. {name} is filled in from `vars`
   // (e.g. {where} from the tile), so one prompt can vary per tile.
   function promptBox(prompt, vars = {}) {
-    const fill = (line) => line.replace(/\{(\w+)\}/g, (match, key) => (vars[key] != null ? vars[key] : match));
-    return el('div', { class: 'tile-prompt' }, [].concat(prompt).map((line) => el('p', null, fill(line))));
+    return el('div', { class: 'tile-prompt' }, [].concat(prompt).map((line) => el('p', null, fillVars(line, vars))));
+  }
+
+  // Replaces {name} in a line with vars[name], leaving unknown names as they are.
+  function fillVars(line, vars = {}) {
+    return line.replace(/\{(\w+)\}/g, (match, key) => (vars[key] != null ? vars[key] : match));
+  }
+
+  // Rules screen shown on the front of the card before a tile opens: the
+  // round's rules with a countdown bar and a Skip button. Calls done() when the
+  // time runs out or Skip is pressed, and returns that skip function.
+  function showRules(front, title, lines, seconds, done) {
+    const total = seconds * 1000;
+    const left = el('span', { class: 'rules-left' });
+    const bar = el('span', { style: 'width: 100%' });
+    let finished = false;
+    const skip = button('Skip', 'primary rules-skip', finish, null, 'S');
+    front.replaceChildren(el('div', { class: 'rules-screen' },
+      el('p', { class: 'rules-eyebrow' }, 'How this round works'),
+      el('h2', { class: 'rules-title' }, title),
+      fitBox('rules-box', 64, el('ul', { class: 'rules-list' }, lines.map((line) => el('li', null, line)))),
+      el('div', { class: 'rules-foot' },
+        el('div', { class: 'timer-bar' }, bar),
+        el('div', { class: 'rules-row' }, left, skip))));
+    front.removeAttribute('aria-hidden');
+    refitAll(front);
+    skip.focus();
+
+    const endsAt = Date.now() + total;
+    const timer = setInterval(tick, 100);
+    tick();
+
+    function tick() {
+      if (!front.isConnected) {
+        clearInterval(timer);
+        return;
+      }
+      const ms = endsAt - Date.now();
+      if (ms <= 0) {
+        finish();
+        return;
+      }
+      left.textContent = `Starting in ${Math.ceil(ms / 1000)}s`;
+      bar.style.width = `${(ms / total) * 100}%`;
+    }
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      clearInterval(timer);
+      front.setAttribute('aria-hidden', 'true');
+      if (front.isConnected) done();
+    }
+    return finish;
+  }
+
+  // Runs intro steps one after another, then then().
+  function runSteps(steps, then) {
+    const [first, ...rest] = steps;
+    if (!first) then();
+    else first(() => runSteps(rest, then));
   }
 
   // A countdown for the whole tile (3 minutes by default). When it runs out the
@@ -683,12 +742,25 @@
       if ((e.key === 'b' || e.key === 'B') && !e.repeat && ctx.buzz) ctx.buzz();
       // R resets just that answer timer.
       if ((e.key === 'r' || e.key === 'R') && !e.repeat && ctx.unbuzz) ctx.unbuzz();
+      // S skips the rules screen.
+      if ((e.key === 's' || e.key === 'S') && !e.repeat && ctx.skipRules) ctx.skipRules();
     };
     document.addEventListener('keydown', onKey);
 
-    // Every tile counts the room in ("Are you ready? 3, 2, 1, GO!") before it
-    // opens; the tile's own timers start after GO.
-    const intro = cfg.countdown !== false ? (then) => countdown(front, then) : null;
+    // Before a tile opens: the round's rules (skippable), then "Are you
+    // ready? 3, 2, 1, GO!". The tile's own timers start after GO.
+    const steps = [];
+    const rules = category.rules && cfg.rulesSeconds !== 0 ? [].concat(category.rules).map((line) => fillVars(line, tile)) : [];
+    if (rules.length > 0) {
+      steps.push((next) => {
+        ctx.skipRules = showRules(front, category.name, rules, cfg.rulesSeconds || 15, () => {
+          ctx.skipRules = null;
+          next();
+        });
+      });
+    }
+    if (cfg.countdown !== false) steps.push((next) => countdown(front, next));
+    const intro = steps.length > 0 ? (then) => runSteps(steps, then) : null;
     animateIn(card, opts.source, () => {
       if (!overlay.isConnected) return;
       ctx.onShown.forEach((fn) => fn());

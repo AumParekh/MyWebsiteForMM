@@ -10,7 +10,8 @@
     "Timers: characterSecondsPerClue is how long each Main Kaun? clue stays (first clue, then each later one). wordSeconds and movieSeconds are how long a Judwaa or Picture Abhi Baaki Hai tile stays open before the answer shows. answerSeconds is the Buzzed answer timer.",
     "A \"prompt\" can be one line or a list of lines; the first line is the headline. Aaja Nachle also adds the clip length automatically.",
     "Jagga Jasoos: each tile's \"where\" fills {where} in the prompt (\"the office\" or \"91springboard\").",
-    "Every tile opens with an \"Are you ready? 3, 2, 1, GO!\" countdown; set \"countdown\": false to turn it off."
+    "Every tile opens with an \"Are you ready? 3, 2, 1, GO!\" countdown; set \"countdown\": false to turn it off.",
+    "Each round's \"rules\" are shown for rulesSeconds (15) when a tile is clicked, with a Skip button (or the S key), before the 3, 2, 1 countdown. Set \"rulesSeconds\": 0 to turn the rules screen off."
   ],
   "title": "Game Board",
   "rowLabels": [
@@ -44,11 +45,19 @@
   "wordSeconds": 120,
   "movieSeconds": 180,
   "answerSeconds": 15,
+  "rulesSeconds": 15,
   "categories": [
     {
       "type": "word",
       "name": "Judwaa",
       "short": "Judwaa",
+      "rules": [
+        "Two clues appear on screen. Find the one word that fits both.",
+        "Buzz in if you know it, then wait for the host to pick your team.",
+        "Once picked, you have 15 seconds to answer.",
+        "One buzz per team per tile. If you're wrong, other teams can still buzz.",
+        "2-minute timer. When it runs out, the answer is revealed."
+      ],
       "tiles": [
         {
           "clue": "Small, Time",
@@ -76,6 +85,13 @@
       "type": "movie",
       "name": "Picture Abhi Baaki Hai",
       "short": "Picture",
+      "rules": [
+        "A movie's plot appears on screen, without the title. Name the movie.",
+        "Buzz in if you know it, then wait for the host to pick your team.",
+        "Once picked, you have 15 seconds to answer.",
+        "One buzz per team per tile. If you're wrong, other teams can still buzz.",
+        "3-minute timer. When it runs out, the answer is revealed."
+      ],
       "tiles": [
         {
           "plot": "A reserved office clerk, whose marriage is devoid of affection, assumes a flamboyant disguise to participate in a dance competition alongside his unsuspecting wife. While she becomes captivated by his boisterous alter ego, she remains oblivious to the fact that the two men competing for her affection are, in reality, one and the same person. His elaborate deception soon forces him to confront whether love can flourish without being recognised for who he truly is.",
@@ -106,6 +122,12 @@
       "prompt": [
         "Bring this exact object: the very same one, not a lookalike.",
         "It's somewhere within {where}. The first team to hand it to us wins the points."
+      ],
+      "rules": [
+        "No buzzers. An object appears on screen.",
+        "Bring that exact object: the very same one, not a lookalike.",
+        "It's somewhere within {where}.",
+        "The first team to hand it to the host wins the points. Run!"
       ],
       "tiles": [
         {
@@ -142,6 +164,12 @@
       "prompt": [
         "Every team, send up one player who hasn't come up yet in this game.",
         "You'll be judged on how well you dance, how quickly you pick up the step, and whether you keep dancing for the entire clip."
+      ],
+      "rules": [
+        "Every team, send up one player who hasn't come up yet in this game.",
+        "A song plays. Buzz in and show the host the song's hook step.",
+        "You're judged on how well you dance, how quickly you pick up the step, and whether you keep dancing for the entire clip.",
+        "The host decides who nailed it."
       ],
       "tiles": [
         {
@@ -180,6 +208,12 @@
       "type": "character",
       "name": "Main Kaun?",
       "short": "Main Kaun",
+      "rules": [
+        "Clues about a person appear one at a time: the first stays for 15 seconds, then a new clue every 30 seconds.",
+        "The sooner you guess, the more you score: 50 points on clue 1, down to 10 on clue 5.",
+        "Buzz in, then wait for the host to pick your team. The clock pauses while you answer.",
+        "Once picked, you have 15 seconds to answer. One buzz per team per tile."
+      ],
       "tiles": [
         {
           "clues": [

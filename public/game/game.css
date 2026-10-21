@@ -297,7 +297,7 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
   backface-visibility: hidden;
 }
 .face.front { display: grid; place-items: center; container-type: size; }
-.face.front span {
+.face.front > span {
   font: 400 30vmin/1 var(--font-display);
   font-size: min(52cqh, 36cqw);
   color: var(--gold);
@@ -305,7 +305,60 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
 }
 .mode-flip .face.back { transform: rotateY(180deg); }
 
-/* Jagga Jasoos countdown on the front of the card */
+/* Until a tile opens only the front takes clicks (the rules Skip button), then only the back. */
+.card:not(.flipped):not(.revealed) .face.back,
+.card.flipped .face.front,
+.card.revealed .face.front { pointer-events: none; }
+
+/* Rules screen on the front of the card */
+.rules-screen {
+  align-self: stretch;
+  justify-self: stretch;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: clamp(8px, 2vmin, 26px);
+  min-height: 0;
+  padding: clamp(14px, 3.5vmin, 56px);
+  animation: pop 0.35s ease-out;
+}
+.rules-eyebrow {
+  margin: 0;
+  color: var(--ink-soft);
+  font: 700 clamp(13px, 2.4vmin, 32px)/1 var(--font-head);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.rules-title {
+  margin: 0;
+  color: var(--gold);
+  font: 400 clamp(32px, 8vmin, 120px)/1 var(--font-display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-shadow: 0.04em 0.06em 0 rgba(0, 0, 0, 0.7);
+}
+.rules-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.55em; }
+.rules-list li { position: relative; padding-left: 1.2em; font-weight: 600; line-height: 1.28; }
+.rules-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.rules-foot { display: grid; gap: clamp(8px, 1.6vmin, 20px); }
+.rules-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rules-left {
+  color: var(--ink-soft);
+  font: 700 clamp(15px, 3vmin, 40px)/1 var(--font-head);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* "Are you ready? 3, 2, 1, GO!" on the front of the card */
 .face.front .count-step { animation: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
 .face.front .count-step.ready {
   padding: 0 0.5em;
