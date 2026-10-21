@@ -8,7 +8,8 @@
     "Character: exactly 5 clues, from hardest to easiest. \"image\" is optional (leave it as \"\" for none).",
     "Demo tiles on the How to Play page live in demo.json, not here.",
     "Timers: characterSecondsPerClue is how long each Main Kaun? clue stays (first clue, then each later one). wordSeconds and movieSeconds are how long a Judwaa or Picture Abhi Baaki Hai tile stays open before the answer shows. answerSeconds is the Buzzed answer timer.",
-    "A \"prompt\" can be one line or a list of lines; the first line is the headline. Aaja Nachle also adds the clip length automatically."
+    "A \"prompt\" can be one line or a list of lines; the first line is the headline. Aaja Nachle also adds the clip length automatically.",
+    "Jagga Jasoos: each tile's \"where\" fills {where} in the prompt (\"the office\" or \"91springboard\"). Every tile opens with an \"Are you ready? 3, 2, 1, GO!\" countdown; set \"fetchCountdown\": false to turn it off."
   ],
   "title": "Game Board",
   "rowLabels": [
@@ -101,26 +102,34 @@
       "type": "fetch",
       "name": "Jagga Jasoos",
       "short": "Jagga",
-      "prompt": "Fetch this exact object. It's somewhere within 91springboard. The first team to hand it to us wins the points.",
+      "prompt": [
+        "Bring this exact object: the very same one, not a lookalike.",
+        "It's somewhere within {where}. The first team to hand it to us wins the points."
+      ],
       "tiles": [
         {
           "image": "fetch-1.jpg",
+          "where": "the office",
           "caption": ""
         },
         {
           "image": "fetch-2.jpg",
+          "where": "the office",
           "caption": ""
         },
         {
           "image": "fetch-3.jpg",
+          "where": "91springboard",
           "caption": ""
         },
         {
           "image": "fetch-4.jpg",
+          "where": "91springboard",
           "caption": ""
         },
         {
           "image": "fetch-5.jpg",
+          "where": "91springboard",
           "caption": ""
         }
       ]

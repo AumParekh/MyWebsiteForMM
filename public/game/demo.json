@@ -36,6 +36,7 @@
     "fetch": {
       "row": 0,
       "image": "demo/pen.svg",
+      "where": "91springboard",
       "caption": "A pen"
     },
     "hook": {

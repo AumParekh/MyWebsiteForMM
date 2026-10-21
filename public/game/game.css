@@ -304,6 +304,16 @@ dialog.confirm form { display: flex; flex-wrap: wrap; justify-content: flex-end;
   text-shadow: 0.04em 0.06em 0 rgba(0, 0, 0, 0.85);
 }
 .mode-flip .face.back { transform: rotateY(180deg); }
+
+/* Jagga Jasoos countdown on the front of the card */
+.face.front .count-step { animation: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
+.face.front .count-step.ready {
+  padding: 0 0.5em;
+  color: var(--ink);
+  font-size: min(16cqh, 10cqw);
+  text-align: center;
+}
+.face.front .count-step.go { color: var(--ink); }
 .mode-fade .face { transition: opacity 0.3s; }
 .mode-fade .face.back { opacity: 0; }
 .mode-fade.revealed .face.back { opacity: 1; }

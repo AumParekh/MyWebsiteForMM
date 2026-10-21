@@ -69,23 +69,41 @@
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   }
 
-  // Two short tones, used when a countdown runs out.
+  // Short tones. By default two beeps, used when a countdown runs out.
   let audioCtx;
-  function beep() {
+  function beep({ freq = 880, times = 2, length = 0.2 } = {}) {
     try {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      [0, 0.25].forEach((delay) => {
+      for (let i = 0; i < times; i++) {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        const t = audioCtx.currentTime + delay;
-        osc.frequency.value = 880;
+        const t = audioCtx.currentTime + i * 0.25;
+        osc.frequency.value = freq;
         gain.gain.setValueAtTime(0.25, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + length);
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(t);
-        osc.stop(t + 0.2);
-      });
+        osc.stop(t + length);
+      }
     } catch (e) {}
+  }
+
+  // "Are you ready? 3, 2, 1, GO!" on the front of a card, then `then()`.
+  // Stops quietly if the tile is closed part-way.
+  function countdown(front, then) {
+    const steps = [['Are you ready?', 1400, 'ready'], ['3', 1000], ['2', 1000], ['1', 1000], ['GO!', 700, 'go']];
+    let i = 0;
+    (function next() {
+      if (!front.isConnected) return;
+      if (i === steps.length) {
+        then();
+        return;
+      }
+      const [text, ms, kind] = steps[i++];
+      front.replaceChildren(el('span', { class: `count-step ${kind || ''}` }, text));
+      if (kind !== 'ready') beep({ freq: kind === 'go' ? 1175 : 660, times: 1, length: kind === 'go' ? 0.45 : 0.15 });
+      setTimeout(next, ms);
+    })();
   }
 
   // "1:24" -> 84 seconds. Plain numbers are taken as seconds.
@@ -220,7 +238,7 @@
       img.addEventListener('error', () => {
         img.replaceWith(el('div', { class: 'missing' }, `Image not found: ${src}`));
       });
-      if (ctx.category.prompt) ctx.body.append(promptBox(ctx.category.prompt));
+      if (ctx.category.prompt) ctx.body.append(promptBox(ctx.category.prompt, ctx.tile));
       ctx.body.append(el('figure', { class: 'fetch-fig' }, img));
       if (ctx.tile.caption) ctx.body.append(el('p', { class: 'fetch-caption' }, ctx.tile.caption));
     },
@@ -444,9 +462,11 @@
   };
 
   // Instruction box on a tile. The first line is the headline; any further
-  // lines are shown smaller underneath.
-  function promptBox(prompt) {
-    return el('div', { class: 'tile-prompt' }, [].concat(prompt).map((line) => el('p', null, line)));
+  // lines are shown smaller underneath. {name} is filled in from `vars`
+  // (e.g. {where} from the tile), so one prompt can vary per tile.
+  function promptBox(prompt, vars = {}) {
+    const fill = (line) => line.replace(/\{(\w+)\}/g, (match, key) => (vars[key] != null ? vars[key] : match));
+    return el('div', { class: 'tile-prompt' }, [].concat(prompt).map((line) => el('p', null, fill(line))));
   }
 
   // A countdown for the whole tile (3 minutes by default). When it runs out the
@@ -597,15 +617,18 @@
     return reveal;
   }
 
-  function animateIn(card, source, done) {
+  // intro: optional step run on the front of the card before it turns over
+  // (the Jagga Jasoos countdown). It calls back when it is done.
+  function animateIn(card, source, done, intro) {
     const flip = card.classList.contains('mode-flip');
     const show = () => {
       card.classList.add(flip ? 'flipped' : 'revealed');
       setTimeout(done, reduceMotion ? 0 : flip ? 800 : 300);
     };
+    const start = () => (intro ? intro(show) : show());
     if (reduceMotion || !source) {
       card.classList.add('no-anim');
-      show();
+      start();
       return;
     }
     // Grow the card out of the tile that was clicked.
@@ -615,7 +638,7 @@
     card.getBoundingClientRect();
     card.classList.add('zoom');
     card.style.transform = '';
-    setTimeout(show, 450);
+    setTimeout(start, 450);
   }
 
   // Opens a tile full screen.
@@ -628,10 +651,9 @@
     const valueText = type === 'character' ? `Character ${label}` : `${label} points`;
 
     const back = el('div', { class: 'face back' });
+    const front = el('div', { class: 'face front', 'aria-hidden': 'true' }, el('span', null, label));
     const card = el('div', { class: `card ${flip ? 'mode-flip' : 'mode-fade'}` },
-      el('div', { class: 'card-inner' },
-        el('div', { class: 'face front', 'aria-hidden': 'true' }, el('span', null, label)),
-        back));
+      el('div', { class: 'card-inner' }, front, back));
     const overlay = el('div', { class: 'overlay', role: 'dialog', 'aria-modal': 'true', 'aria-label': category.name }, card);
 
     const body = el('div', { class: `card-body body-${type}` });
@@ -664,11 +686,13 @@
     };
     document.addEventListener('keydown', onKey);
 
+    // Jagga Jasoos tiles count teams in before the object is shown.
+    const intro = type === 'fetch' && cfg.fetchCountdown !== false ? (then) => countdown(front, then) : null;
     animateIn(card, opts.source, () => {
       if (!overlay.isConnected) return;
       ctx.onShown.forEach((fn) => fn());
       (ctx.focusOnShow || backBtn).focus();
-    });
+    }, intro);
 
     function close() {
       ctx.cleanups.forEach((fn) => fn());
