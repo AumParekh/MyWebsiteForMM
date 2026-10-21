@@ -50,24 +50,24 @@
       "short": "Judwaa",
       "tiles": [
         {
+          "clue": "Small, Time (6)",
+          "answer": "Minute"
+        },
+        {
           "clue": "Fish, Instrument (4)",
           "answer": "Bass"
+        },
+        {
+          "clue": "Financial institution, Rely on (4)",
+          "answer": "Bank"
         },
         {
           "clue": "Just, Event (4)",
           "answer": "Fair"
         },
         {
-          "clue": "Small, Time (6)",
-          "answer": "Minute"
-        },
-        {
           "clue": "Parasite, Stroke of luck (5)",
           "answer": "Fluke"
-        },
-        {
-          "clue": "Fall, Note (4)",
-          "answer": "Slip"
         }
       ]
     },
